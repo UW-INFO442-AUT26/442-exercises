@@ -1,0 +1,2377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<meta name="description" content="INFO 442 practice exercise. Answer first, then check." />
+<title>Practice exercise</title>
+<style>
+/* ------------------------------------------------------------------
+   Design tokens vendored from skills/442-brand/tokens.css (INFO 442
+   brand). This is a mirror kept inline so the page stays a single
+   self-contained file. Change a value in 442-brand/tokens.css and in
+   442-brand/STYLE.md first, then re-copy it here.
+   ------------------------------------------------------------------ */
+:root {
+  /* Brand - use as marks, not as fields. */
+  --uw-purple:      #4B2E83;
+  --uw-purple-deep: #351F63;
+  --uw-gold:        #B7A57A;
+  --uw-gold-deep:   #85754D;
+
+  /* Neutrals - the actual surface. */
+  --bg:       #F7F7FB;
+  --surface:  #FFFFFF;
+  --surface-2:#EDEDF4;
+  --ink:      #16151D;
+  --ink-2:    #3C3B4A;
+  --muted:    #6B6A7B;
+  --border:   #DADAE4;
+
+  /* One accent carries interaction. */
+  --accent:      #6C4AB6;
+  --accent-ink:  #FFFFFF;
+  --accent-soft: #EDE7FB;
+
+  /* Semantic state - reserve for real state, never decoration. */
+  --success: #1F7A5C;
+  --success-soft: #E2F3EC;
+  --warning: #9A6414;
+  --warning-soft: #FBEEDA;
+  --error:   #A32B32;
+  --error-soft: #FBE6E7;
+  --info:    #2F5F96;
+  --info-soft: #E6EEF8;
+
+  /* Type */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+  --leading: 1.55;
+  --leading-tight: 1.2;
+
+  /* Space - 4 px base */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-pill: 999px;
+  --shadow-1: 0 1px 2px rgba(22, 21, 29, 0.06), 0 1px 3px rgba(22, 21, 29, 0.08);
+  --shadow-2: 0 6px 16px rgba(22, 21, 29, 0.10);
+  --tap: 44px;
+
+  --motion: 160ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --motion: 1ms; }
+}
+
+/* Dark surface, opt-in with <html data-theme="dark">. */
+[data-theme="dark"] {
+  --bg:       #0F0E15;
+  --surface:  #1A1822;
+  --surface-2:#242230;
+  --ink:      #F2F1F7;
+  --ink-2:    #C9C7D6;
+  --muted:    #9A98AC;
+  --border:   #302E3C;
+  --accent:      #9B7BE0;
+  --accent-ink:  #14121B;
+  --accent-soft: #2A2340;
+  --uw-purple: #8A6FC7;
+  --uw-gold:   #D2C49B;
+}
+
+/* ------------------------------------------------------------------
+   Two roles the brand mirror does not carry, kept beside it so the
+   mirror above stays a straight copy of tokens.css.
+
+   --motion-move  the longer step an item uses when it changes place.
+   --border-strong  the edge of a control. A control that is only a
+                    border has to clear 3:1 against what sits behind it,
+                    and --border (a hairline) does not.
+   ------------------------------------------------------------------ */
+:root {
+  --motion-move: 240ms;
+  --border-strong: #8A899A;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --motion-move: 1ms; }
+}
+
+/* Re-picked on the dark neutral scale, once per role, so a state panel
+   is a step lighter than the card it sits in instead of a light patch
+   on a dark ground. Elevation goes up in dark mode, never down. */
+[data-theme="dark"] {
+  --border-strong: #6E6C86;
+  --success: #6FD3AE;
+  --success-soft: #182A24;
+  --warning: #E0B45F;
+  --warning-soft: #2A2316;
+  --error:   #F08A90;
+  --error-soft:   #2C181A;
+  --info:    #8AB6E8;
+  --info-soft:    #17222E;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading);
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Motion explains a change: a control answering the finger, an item
+   landing, a panel arriving. Nothing here is needed to read the page,
+   and every duration collapses under prefers-reduced-motion. */
+@media (prefers-reduced-motion: no-preference) {
+  a, button { transition: color var(--motion) var(--ease), background var(--motion) var(--ease); }
+}
+
+/* ------------------------------------------------------------------
+   Exercise layout. Mobile first: one 360 px column, vertical only.
+   ------------------------------------------------------------------ */
+.wrap {
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) var(--space-12);
+  padding-bottom: calc(var(--space-12) + env(safe-area-inset-bottom));
+}
+
+.top { padding-bottom: var(--space-4); }
+
+h1 {
+  margin: 0;
+  font-size: var(--text-2xl);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+/* The UW purple mark: a short rule under the title, never a field. */
+h1::after {
+  content: "";
+  display: block;
+  width: 2.5rem;
+  height: 3px;
+  margin-top: var(--space-3);
+  background: var(--uw-purple);
+  border-radius: var(--radius-pill);
+}
+
+.goal {
+  margin: var(--space-4) 0 0;
+  color: var(--ink-2);
+  font-size: var(--text-lg);
+  overflow-wrap: anywhere;
+}
+
+.card {
+  margin-top: var(--space-6);
+  padding: var(--space-6) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+}
+
+/* A quieter card, for a secondary section like "Keep going". */
+.card-quiet {
+  background: var(--bg);
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+.card-quiet .sub { margin-top: 0; }
+
+.resources {
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.resource { display: grid; gap: var(--space-1); }
+
+.res-link {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap);
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+.res-note { color: var(--muted); font-size: var(--text-sm); }
+
+/* ---- progress: one quiet fact, then the bar ----------------------- */
+
+.progress { margin-bottom: var(--space-6); }
+
+.progress-label {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* A bar is a graphic: keep a full step of space between it and any text. */
+.bar {
+  height: 6px;
+  margin-top: var(--space-3);
+  background: var(--surface-2);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.bar-fill {
+  width: 0;
+  height: 100%;
+  background: var(--accent);
+  border-radius: var(--radius-pill);
+  transition: width var(--motion-move) var(--ease);
+}
+
+/* ---- the prompt is the focal point of the view -------------------- */
+
+.prompt {
+  margin: 0 0 var(--space-6);
+  font-size: var(--text-xl);
+  line-height: var(--leading-tight);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.prompt:focus { outline: none; }
+
+.sub {
+  margin: var(--space-8) 0 var(--space-2);
+  font-size: var(--text-lg);
+  line-height: var(--leading-tight);
+  font-weight: 600;
+}
+
+.lead { margin: var(--space-4) 0 0; color: var(--ink-2); overflow-wrap: anywhere; }
+.lead:first-child { margin-top: 0; }
+
+.lbl {
+  margin: var(--space-4) 0 var(--space-2);
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.lbl:first-child { margin-top: 0; }
+
+/* A labelled pair: label in its own slot above its value, never glued
+   to it with a separator. */
+.pair { margin: var(--space-6) 0 0; }
+.pair:first-child { margin-top: 0; }
+.pair-l {
+  display: block;
+  color: var(--ink-2);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.pair-v { display: block; margin-top: var(--space-1); overflow-wrap: anywhere; }
+
+/* One figure, one context fact, each in its own slot. */
+.figures { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+.figure { display: grid; gap: var(--space-1); }
+.figure-n {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.figure-l { color: var(--ink-2); font-size: var(--text-sm); }
+
+/* ---- figure: a visual above the prompt ---------------------------- */
+
+.fig { margin: 0 0 var(--space-6); padding: 0; }
+
+.fig-body { display: block; }
+.fig-body > svg,
+.fig-body > img { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+
+.fig-cap {
+  margin: var(--space-3) 0 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+/* Code figures and any author supplied <pre> wrap, so a long line never
+   makes the page scroll sideways on a phone. */
+.fig-code,
+.fig-body pre {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.fig-code code,
+.fig-body pre code { font-family: var(--font-mono); font-size: var(--text-sm); }
+
+/* A figure element with data-reveal: tap or hover to show one caption. */
+.reveal { cursor: pointer; }
+.reveal:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.reveal-on { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.reveals { margin-top: var(--space-3); }
+
+.reveal-cap {
+  margin: 0 0 var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--ink);
+  font-size: var(--text-sm);
+  animation: arrive var(--motion-move) var(--ease);
+}
+
+.reveal-cap:last-child { margin-bottom: 0; }
+
+/* ---- widget: an interactive play area ----------------------------- */
+
+.widget {
+  margin: 0 0 var(--space-6);
+  padding: var(--space-4);
+  background: var(--surface-2);
+  border-radius: var(--radius);
+}
+
+.play { min-height: var(--space-8); }
+.play > * { max-width: 100%; }
+.play svg, .play img { max-width: 100%; height: auto; }
+.play p { margin: 0 0 var(--space-2); overflow-wrap: anywhere; }
+.play p:last-child { margin-bottom: 0; }
+
+.controls { display: grid; gap: var(--space-3); margin-top: var(--space-4); }
+
+.ctl { display: grid; gap: var(--space-2); }
+
+.ctl-lbl { color: var(--ink-2); font-size: var(--text-sm); font-weight: 600; }
+
+.ctl-row { display: flex; align-items: center; gap: var(--space-3); }
+
+.rng {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: var(--tap);
+  accent-color: var(--accent);
+}
+
+.ctl-out {
+  flex: none;
+  min-width: 3.5rem;
+  text-align: right;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.ctl-switch {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  cursor: pointer;
+}
+
+.sw { flex: none; width: 1.4rem; height: 1.4rem; accent-color: var(--accent); }
+
+.sel {
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: var(--text-base);
+}
+
+.widget-cap { margin: var(--space-3) 0 0; color: var(--muted); font-size: var(--text-xs); }
+
+/* ---- answers ------------------------------------------------------ */
+
+.answer { margin-top: var(--space-3); }
+
+.opts { display: grid; gap: var(--space-3); }
+
+.opt {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: var(--text-base);
+  line-height: var(--leading);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--motion) var(--ease), border-color var(--motion) var(--ease);
+}
+
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+
+.opt:disabled { cursor: default; }
+
+.opt-key {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.4rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.opt-text { overflow-wrap: anywhere; }
+
+.opt-mark {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.opt[data-picked="yes"] { background: var(--accent-soft); border-color: var(--accent); }
+.opt[data-picked="yes"] .opt-key { border-color: var(--accent); color: var(--ink); }
+
+.opt[data-state="right"] {
+  background: var(--success-soft);
+  border-color: var(--success);
+  border-width: 2px;
+  padding: calc(var(--space-3) - 1px) calc(var(--space-4) - 1px);
+}
+.opt[data-state="right"] .opt-mark { color: var(--success); }
+.opt[data-state="right"] .opt-key { border-color: var(--success); color: var(--success); }
+
+.opt[data-state="wrong"] {
+  background: var(--error-soft);
+  border-color: var(--error);
+  border-width: 2px;
+  padding: calc(var(--space-3) - 1px) calc(var(--space-4) - 1px);
+}
+.opt[data-state="wrong"] .opt-mark { color: var(--error); }
+.opt[data-state="wrong"] .opt-key { border-color: var(--error); color: var(--error); }
+
+.opt[data-state="muted"] { opacity: 1; color: var(--muted); }
+.opt[data-state="muted"] .opt-key { color: var(--muted); }
+
+/* order: a list the student drags into shape. The arrows under each item
+   are the tap and keyboard path, so no pointer is ever required. */
+.seq {
+  position: relative;
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.srow {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  gap: var(--space-2) var(--space-3);
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  transition: transform var(--motion-move) var(--ease),
+              background var(--motion) var(--ease),
+              border-color var(--motion) var(--ease);
+}
+
+.srow-head { grid-area: 1 / 2; display: flex; gap: var(--space-2); align-items: baseline; }
+.srow-n { flex: none; color: var(--ink-2); font-weight: 700; font-variant-numeric: tabular-nums; }
+.srow-t { overflow-wrap: anywhere; }
+.srow-mv { grid-area: 2 / 2; display: flex; gap: var(--space-2); }
+
+.srow.dragging {
+  position: relative;
+  z-index: 2;
+  background: var(--surface-2);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-2);
+}
+
+.srow[data-state="right"] { background: var(--success-soft); border-color: var(--success); }
+.srow[data-state="wrong"] { background: var(--error-soft); border-color: var(--error); }
+.srow[data-state="right"] .opt-mark { color: var(--success); }
+.srow[data-state="wrong"] .opt-mark { color: var(--error); }
+
+/* The grip is the drag handle. touch-action: none is scoped to it, so the
+   rest of the row still scrolls the page under a finger. */
+.grip {
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  color: var(--muted);
+  cursor: grab;
+  touch-action: none;
+}
+
+.grip::before {
+  content: "";
+  width: 14px;
+  height: 21px;
+  background-image: radial-gradient(circle, currentColor 1.5px, transparent 1.6px);
+  background-size: 7px 7px;
+}
+
+.srow.dragging .grip { cursor: grabbing; }
+
+.mv {
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  padding: 0;
+  background: var(--surface);
+  color: var(--ink-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.mv:hover:not(:disabled) { border-color: var(--accent); color: var(--ink); }
+.mv:disabled { opacity: 0.45; cursor: default; }
+.ic { display: block; }
+
+/* The floating copy that follows the finger while a row is dragged onto
+   a bucket. Clamped to the viewport so it can never widen the page. */
+.ghost {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9;
+  max-width: 16rem;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-2);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+}
+
+/* sort and match: one row per item, a button per bucket or partner */
+.assign { display: grid; gap: var(--space-3); }
+
+.arow {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  gap: var(--space-2) var(--space-3);
+  align-items: center;
+  padding: var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  transition: background var(--motion) var(--ease), border-color var(--motion) var(--ease);
+}
+
+.arow[data-state="right"] { border-color: var(--success); background: var(--success-soft); }
+.arow[data-state="wrong"] { border-color: var(--error); background: var(--error-soft); }
+.arow[data-state="right"] .opt-mark { color: var(--success); }
+.arow[data-state="wrong"] .opt-mark { color: var(--error); }
+
+.arow[data-kind="match"] .atext { grid-area: 1 / 1 / 2 / -1; }
+.arow.dragging { border-color: var(--accent); background: var(--surface-2); }
+.arow.dragging .abtn { border-color: var(--accent); }
+
+.atext { grid-area: 1 / 2; margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+
+.abtns {
+  grid-area: 2 / 1 / 3 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+  gap: var(--space-2);
+}
+
+.abtn {
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: var(--text-sm);
+  line-height: var(--leading);
+  text-align: left;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+  transition: background var(--motion) var(--ease), border-color var(--motion) var(--ease);
+}
+
+.abtn:hover:not(:disabled) { border-color: var(--accent); }
+.abtn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); font-weight: 600; }
+.abtn:disabled { cursor: default; }
+.abtn[data-state="right"] { background: var(--success-soft); border-color: var(--success); }
+.abtn[data-state="wrong"] { background: var(--error-soft); border-color: var(--error); }
+.abtn[data-state="muted"] { color: var(--muted); }
+.abtn.drop-on { background: var(--accent-soft); border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+
+.short { display: grid; gap: var(--space-2); }
+
+.inp {
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: var(--text-base);
+}
+
+.inp:focus-visible { border-color: var(--accent); }
+
+/* ---- buttons: one primary action per region ----------------------- */
+
+.btn {
+  min-height: var(--tap);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font: inherit;
+  font-size: var(--text-base);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn:disabled { opacity: 0.45; cursor: default; }
+
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover:not(:disabled) { background: var(--uw-purple); }
+
+.btn-quiet {
+  background: var(--surface);
+  color: var(--ink);
+  border-color: var(--border-strong);
+}
+.btn-quiet:hover:not(:disabled) { border-color: var(--ink-2); }
+
+.btn-row {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.btn-row:first-child { margin-top: 0; }
+.btn-row + .btn-row { margin-top: var(--space-3); }
+
+/* Two short, peer actions share one row so the region keeps one primary. */
+.btn-split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+
+.hint-btn { margin-top: var(--space-4); }
+
+.hint {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--warning-soft);
+  border-left: 3px solid var(--warning);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--ink);
+  font-size: var(--text-sm);
+  animation: arrive var(--motion-move) var(--ease);
+}
+
+/* ---- feedback ----------------------------------------------------- */
+
+.fb {
+  margin-top: var(--space-6);
+  padding: var(--space-4);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--accent-soft);
+  animation: arrive var(--motion-move) var(--ease);
+}
+
+.fb p { margin: 0; overflow-wrap: anywhere; }
+.fb p + p { margin-top: var(--space-4); }
+
+/* Focus lands here for a screen reader, but this is not a control, so it
+   does not wear a control's ring. */
+.fb:focus { outline: none; }
+
+.fb-verdict { font-size: var(--text-lg); font-weight: 700; line-height: var(--leading-tight); }
+
+.fb-ok { border-color: var(--success); background: var(--success-soft); }
+.fb-ok .fb-verdict { color: var(--success); }
+
+.fb-no { border-color: var(--error); background: var(--error-soft); }
+.fb-no .fb-verdict { color: var(--error); }
+
+.fb .pair-l { color: var(--ink-2); }
+.fb-val { font-weight: 600; }
+.fb-val code { font-family: var(--font-mono); font-size: var(--text-sm); overflow-wrap: anywhere; }
+.fb-mis .pair-v { color: var(--ink-2); font-size: var(--text-sm); }
+
+/* ---- results ------------------------------------------------------ */
+
+.score { margin: 0; display: flex; align-items: baseline; gap: var(--space-2); }
+.score-n {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.score-d { color: var(--ink-2); font-size: var(--text-lg); }
+
+.verdict { margin: var(--space-6) 0 0; padding: var(--space-4); border-radius: var(--radius-sm); }
+.verdict-met { background: var(--success-soft); }
+.verdict-not { background: var(--warning-soft); }
+.verdict-l { display: block; font-weight: 700; }
+.verdict-met .verdict-l { color: var(--success); }
+.verdict-not .verdict-l { color: var(--warning); }
+.verdict-v { display: block; margin-top: var(--space-1); color: var(--ink-2); }
+
+.res-list { margin: var(--space-4) 0 0; padding: 0; list-style: none; }
+.res-list li {
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--border);
+}
+.res-list li:first-child { border-top: 0; padding-top: 0; }
+.res-list .q { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.res-list .pair { margin-top: var(--space-3); }
+.res-list .pair-v { color: var(--ink-2); font-size: var(--text-sm); }
+
+.spacing {
+  margin: var(--space-6) 0 0;
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+}
+
+/* ---- motion, and the one place text is hidden from sight ---------- */
+
+@keyframes arrive {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (min-width: 30rem) {
+  .btn-row { grid-auto-flow: column; grid-auto-columns: 1fr; }
+  .btn-split { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1 id="page-title">Practice exercise</h1>
+    <p class="goal" id="page-goal"></p>
+  </header>
+  <main id="app"></main>
+</div>
+
+<!-- The build replaces the JSON below with the student's spec (see
+     assets/exercise.spec.json). The page reads it at load and needs no
+     network access. -->
+<script type="application/json" id="spec">
+{
+  "meta": {
+    "title": "Write your own agent skill",
+    "slug": "442-write-your-own-skill",
+    "goal": "After this you can write a SKILL.md your agent finds on its own, and link two skills into one workflow.",
+    "minutes": 10,
+    "criterion": {
+      "text": "Get 6 of the 7 graded steps right, including what makes a skill fire.",
+      "minCorrect": 6
+    },
+    "resources": [
+      {
+        "label": "Matt Pocock: a complete AI coding workflow, end to end",
+        "href": "https://www.youtube.com/watch?v=M6mYodf0dJM",
+        "note": "His walkthrough of the skills repo. Leading words, the description, and when a skill fires."
+      },
+      {
+        "label": "Matt Pocock: 25 agent skills, GitHub Copilot Day",
+        "href": "https://www.youtube.com/watch?v=9yPyoxlyc5Q",
+        "note": "A talk on the same ideas, with live examples."
+      },
+      {
+        "label": "The written guide behind this exercise",
+        "href": "https://github.com/UW-INFO442-AUT26/442-skills/blob/main/skills/442-write-skill/SKILL.md",
+        "note": "The rules every skill in this class follows."
+      }
+    ],
+    "style": "/* ------------------------------------------------------------------\n   Visuals for this exercise, added beside the template styles.\n\n   The two drag steps and the multi step carry one drawn icon per card,\n   so each card reads as an object and not as a line of text. Each icon\n   is a mask shape: the shape comes from the data URI, the colour comes\n   from the text it sits beside. Only the alpha of the mask is used, so\n   the paint inside the data URI never shows. Every colour here is a\n   token, and every size comes from the spacing and type scales.\n   ------------------------------------------------------------------ */\n:root {\n  --icon-check: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9.6 17.4 4.2 12l2.1-2.1 3.3 3.3 8.1-8.1 2.1 2.1z'/%3E%3C/svg%3E\");\n  --icon-cloud: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7.2 18.6a4.3 4.3 0 0 1-.4-8.6 5.7 5.7 0 0 1 10.8-1.3 3.9 3.9 0 0 1-.7 9.9z'/%3E%3C/svg%3E\");\n  --icon-magnify: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M10.5 3a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15zm0 3a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z'/%3E%3Cpath d='M15.4 13.7 21.7 20l-1.7 1.7-6.3-6.3z'/%3E%3C/svg%3E\");\n  --icon-dots: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='6' cy='12' r='2.3'/%3E%3Ccircle cx='12' cy='12' r='2.3'/%3E%3Ccircle cx='18' cy='12' r='2.3'/%3E%3C/svg%3E\");\n  --icon-tag: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M13.4 2.4 21.6 10.6a2.1 2.1 0 0 1 0 2.9l-8.1 8.1a2.1 2.1 0 0 1-2.9 0L2.4 13.4V4.5a2.1 2.1 0 0 1 2.1-2.1zM7.3 6.1a1.7 1.7 0 1 0 0 3.4 1.7 1.7 0 0 0 0-3.4z'/%3E%3C/svg%3E\");\n  --icon-bubble: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4.4 3.8h15.2A2.4 2.4 0 0 1 22 6.2v8.4a2.4 2.4 0 0 1-2.4 2.4h-8.4l-5.6 4.1v-4.1H4.4A2.4 2.4 0 0 1 2 14.6V6.2a2.4 2.4 0 0 1 2.4-2.4z'/%3E%3C/svg%3E\");\n  --icon-key: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M8.6 3a5.6 5.6 0 1 1 5.2 7.6l-.8 1.2h-2v2h-2v2.2H5.6l-1.2-2.7 4.4-6A5.6 5.6 0 0 1 8.6 3zm1.3 3a2.1 2.1 0 1 0 0 4.2 2.1 2.1 0 0 0 0-4.2z'/%3E%3C/svg%3E\");\n  --icon-list: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.4 4.9H6v2.6H3.4zM8.2 5.2h12.4v2H8.2zM3.4 10.6H6V13.2H3.4zM8.2 10.9h12.4v2H8.2zM3.4 16.3H6v2.6H3.4zM8.2 16.6h12.4v2H8.2z'/%3E%3C/svg%3E\");\n  --icon-target: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 3.2a6.8 6.8 0 1 1 0 13.6 6.8 6.8 0 0 1 0-13.6zm0 3.4a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8z'/%3E%3C/svg%3E\");\n  --icon-play: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7.4 4.6 19.2 12 7.4 19.4z'/%3E%3C/svg%3E\");\n  --icon-folder: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M2.8 5.4h6.5l2.1 2.7h9.8v10.5H2.8z'/%3E%3C/svg%3E\");\n  --icon-scroll: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.6 3h16.8v2.6H3.6zM3.6 7.3h16.8v2.6H3.6zM3.6 11.6h16.8v2.6H3.6zM3.6 15.9h16.8v2.6H3.6zM3.6 20.2h9.8v2.4H3.6z'/%3E%3C/svg%3E\");\n}\n\n[data-kind=\"sort\"] .arow .atext::before,\n[data-kind=\"match\"] .arow .atext::before,\n[data-kind=\"order\"] .srow .srow-t::before,\n[data-kind=\"multi\"] .opt .opt-text::before {\n  content: \"\";\n  display: inline-block;\n  width: 1.25rem;\n  height: 1.25rem;\n  margin-right: var(--space-2);\n  vertical-align: -0.25rem;\n  background-color: currentColor;\n  -webkit-mask-repeat: no-repeat;\n  mask-repeat: no-repeat;\n  -webkit-mask-position: center;\n  mask-position: center;\n  -webkit-mask-size: contain;\n  mask-size: contain;\n  opacity: 0.9;\n}\n[data-kind=\"sort\"] [data-row=\"0\"] .atext::before { -webkit-mask-image: var(--icon-check); mask-image: var(--icon-check); }\n[data-kind=\"sort\"] [data-row=\"1\"] .atext::before { -webkit-mask-image: var(--icon-cloud); mask-image: var(--icon-cloud); }\n[data-kind=\"sort\"] [data-row=\"2\"] .atext::before { -webkit-mask-image: var(--icon-magnify); mask-image: var(--icon-magnify); }\n[data-kind=\"sort\"] [data-row=\"3\"] .atext::before { -webkit-mask-image: var(--icon-dots); mask-image: var(--icon-dots); }\n[data-kind=\"match\"] [data-row=\"0\"] .atext::before { -webkit-mask-image: var(--icon-tag); mask-image: var(--icon-tag); }\n[data-kind=\"match\"] [data-row=\"1\"] .atext::before { -webkit-mask-image: var(--icon-bubble); mask-image: var(--icon-bubble); }\n[data-kind=\"match\"] [data-row=\"2\"] .atext::before { -webkit-mask-image: var(--icon-key); mask-image: var(--icon-key); }\n[data-kind=\"match\"] [data-row=\"3\"] .atext::before { -webkit-mask-image: var(--icon-list); mask-image: var(--icon-list); }\n[data-kind=\"order\"] [data-idx=\"0\"] .srow-t::before { -webkit-mask-image: var(--icon-list); mask-image: var(--icon-list); }\n[data-kind=\"order\"] [data-idx=\"1\"] .srow-t::before { -webkit-mask-image: var(--icon-target); mask-image: var(--icon-target); }\n[data-kind=\"order\"] [data-idx=\"2\"] .srow-t::before { -webkit-mask-image: var(--icon-play); mask-image: var(--icon-play); }\n[data-kind=\"order\"] [data-idx=\"3\"] .srow-t::before { -webkit-mask-image: var(--icon-bubble); mask-image: var(--icon-bubble); }\n[data-kind=\"multi\"] .opt:nth-child(1) .opt-text::before { -webkit-mask-image: var(--icon-bubble); mask-image: var(--icon-bubble); }\n[data-kind=\"multi\"] .opt:nth-child(2) .opt-text::before { -webkit-mask-image: var(--icon-target); mask-image: var(--icon-target); }\n[data-kind=\"multi\"] .opt:nth-child(3) .opt-text::before { -webkit-mask-image: var(--icon-scroll); mask-image: var(--icon-scroll); }\n[data-kind=\"multi\"] .opt:nth-child(4) .opt-text::before { -webkit-mask-image: var(--icon-folder); mask-image: var(--icon-folder); }"
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "tag": "how a skill fires",
+      "kind": "explore",
+      "prompt": "Press Next step to see how your agent picks a skill, then answer the questions.",
+      "widget": {
+        "caption": "Each press of Next step moves the story one step along. The description is the line the agent reads.",
+        "html": "<svg class=\"proc\" viewBox=\"0 0 260 344\" data-at=\"0\" width=\"100%\" style=\"height:auto\" role=\"img\" aria-labelledby=\"proc-title\">\n<title id=\"proc-title\">How a skill fires: your request goes to the agent, the agent reads the description line of three skill cards, one description matches, and that skill runs</title>\n<style>\n  svg.proc { font-family: var(--font-sans); }\n  svg.proc text { fill: var(--ink); }\n  svg.proc .p-lab { font-size: var(--text-xs); fill: var(--muted); }\n  svg.proc .p-say { font-size: var(--text-sm); }\n  svg.proc .p-box { fill: var(--surface-2); stroke: var(--border-strong); stroke-width: 1.5; }\n  svg.proc .p-card { fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.5; }\n  svg.proc .p-name { font-size: var(--text-xs); font-weight: 700; }\n  svg.proc .p-desc { font-size: var(--text-xs); fill: var(--muted); }\n  svg.proc .p-wire { fill: none; stroke: var(--border-strong); stroke-width: 2; }\n  svg.proc .p-draw { stroke-dasharray: 1; stroke-dashoffset: 1; }\n  svg.proc .p-w-ask { stroke-dashoffset: 0; }\n  svg.proc .p-stub { stroke-dasharray: 6 5; }\n  svg.proc .p-scan { fill: var(--accent); fill-opacity: 0.12; stroke: var(--accent); stroke-width: 2; opacity: 0; transform: translateY(-64px); }\n  svg.proc .p-run { opacity: 0; transform: scale(0.7); transform-box: fill-box; transform-origin: 50% 50%; }\n  svg.proc .p-ring { fill: none; stroke: var(--accent); stroke-width: 2; opacity: 0; transform-box: fill-box; transform-origin: 50% 50%; }\n  svg.proc[data-at=\"1\"] .p-w-bus, svg.proc[data-at=\"2\"] .p-w-bus, svg.proc[data-at=\"3\"] .p-w-bus { stroke-dashoffset: 0; }\n  svg.proc[data-at=\"1\"] .p-desc, svg.proc[data-at=\"2\"] .p-desc, svg.proc[data-at=\"3\"] .p-desc { fill: var(--ink); }\n  svg.proc[data-at=\"1\"] .p-scan { transform: translateY(128px); opacity: 1; }\n  svg.proc[data-at=\"2\"] .p-scan { transform: translateY(64px); opacity: 1; }\n  svg.proc[data-at=\"3\"] .p-scan { transform: translateY(64px); opacity: 0; }\n  svg.proc[data-at=\"2\"] .p-card-hit, svg.proc[data-at=\"3\"] .p-card-hit { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2.5; }\n  svg.proc[data-at=\"2\"] .p-mw, svg.proc[data-at=\"3\"] .p-mw { fill: var(--accent); font-weight: 700; }\n  svg.proc[data-at=\"2\"] .p-s1, svg.proc[data-at=\"3\"] .p-s1 { stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: none; }\n  svg.proc[data-at=\"3\"] .p-run { opacity: 1; transform: scale(1); }\n  svg.proc[data-at=\"3\"] .p-ring { opacity: 1; }\n  @media (prefers-reduced-motion: no-preference) {\n    svg.proc .p-draw { transition: stroke-dashoffset 600ms var(--ease); }\n    svg.proc .p-stub { transition: stroke 300ms var(--ease), stroke-width 300ms var(--ease), stroke-dasharray 300ms var(--ease); }\n    svg.proc .p-scan { transition: transform 600ms var(--ease), opacity 350ms var(--ease); }\n    svg.proc .p-card { transition: fill 300ms var(--ease), stroke 300ms var(--ease), stroke-width 300ms var(--ease); }\n    svg.proc .p-desc, svg.proc .p-mw { transition: fill 300ms var(--ease); }\n    svg.proc .p-run { transition: opacity 300ms var(--ease), transform 300ms var(--ease); }\n    svg.proc[data-at=\"3\"] .p-ring { animation: proc-pulse 1400ms ease-out infinite; }\n  }\n  @keyframes proc-pulse { 0% { opacity: 0.6; transform: scale(0.7); } 70% { opacity: 0; transform: scale(1.6); } 100% { opacity: 0; transform: scale(1.6); } }\n</style>\n<defs>\n  <marker id=\"proc-arrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"10\" markerHeight=\"10\" markerUnits=\"userSpaceOnUse\" orient=\"auto\">\n    <path d=\"M0 0 L10 5 L0 10 Z\" fill=\"context-stroke\"/>\n  </marker>\n</defs>\n<rect class=\"p-req\" x=\"12\" y=\"8\" width=\"236\" height=\"52\" rx=\"10\" fill=\"var(--surface-2)\" stroke=\"var(--border-strong)\" stroke-width=\"1.5\"/>\n<text class=\"p-lab\" x=\"24\" y=\"29\">You ask</text>\n<text class=\"p-say\" x=\"24\" y=\"48\">check my links</text>\n<path class=\"p-wire p-draw p-w-ask\" d=\"M130 60 V 76\" pathLength=\"1\" marker-end=\"url(#proc-arrow)\"/>\n<rect class=\"p-box\" x=\"76\" y=\"80\" width=\"108\" height=\"44\" rx=\"10\"/>\n<text class=\"p-name\" x=\"130\" y=\"107\" text-anchor=\"middle\" font-size=\"var(--text-sm)\">Agent</text>\n<path class=\"p-wire p-draw p-w-bus\" d=\"M130 124 V 132 H 22 V 288\" pathLength=\"1\"/>\n<path class=\"p-wire p-stub p-s0\" d=\"M22 160 H 31\" marker-end=\"url(#proc-arrow)\"/>\n<path class=\"p-wire p-stub p-s1\" d=\"M22 224 H 31\" marker-end=\"url(#proc-arrow)\"/>\n<path class=\"p-wire p-stub p-s2\" d=\"M22 288 H 31\" marker-end=\"url(#proc-arrow)\"/>\n<rect class=\"p-scan\" x=\"29\" y=\"127\" width=\"224\" height=\"66\" rx=\"14\"/>\n<rect class=\"p-card\" x=\"34\" y=\"132\" width=\"216\" height=\"56\" rx=\"10\"/>\n<text class=\"p-name\" x=\"46\" y=\"160\">442-weekly-report</text>\n<text class=\"p-desc\" x=\"46\" y=\"178\">Send a weekly report</text>\n<rect class=\"p-card p-card-hit\" x=\"34\" y=\"196\" width=\"216\" height=\"56\" rx=\"10\"/>\n<text class=\"p-name\" x=\"46\" y=\"224\">442-check-links</text>\n<text class=\"p-desc\" x=\"46\" y=\"242\"><tspan class=\"p-mw\">Check</tspan> <tspan class=\"p-mw\">links</tspan> before publishing</text>\n<rect class=\"p-card\" x=\"34\" y=\"260\" width=\"216\" height=\"56\" rx=\"10\"/>\n<text class=\"p-name\" x=\"46\" y=\"288\">442-rename-files</text>\n<text class=\"p-desc\" x=\"46\" y=\"306\">Rename files in bulk</text>\n<g class=\"p-run\">\n  <circle class=\"p-ring\" cx=\"214\" cy=\"214\" r=\"16\"/>\n  <rect x=\"186\" y=\"204\" width=\"56\" height=\"20\" rx=\"10\" fill=\"var(--accent)\"/>\n  <text x=\"214\" y=\"218\" text-anchor=\"middle\" font-size=\"var(--text-xs)\" font-weight=\"700\" fill=\"var(--accent-ink)\">runs</text>\n</g>\n</svg>\n<p data-head style=\"margin: var(--space-3) 0 var(--space-2); font-weight: 600\"></p>\n<p data-note></p>",
+        "controls": [
+          {
+            "type": "button",
+            "name": "step",
+            "label": "Next step"
+          },
+          {
+            "type": "button",
+            "name": "reset",
+            "label": "Start again"
+          }
+        ],
+        "js": "(function () {\n  var notes = [\n    [\"You ask: check my links\", \"Your words are the only thing the agent has to go on.\"],\n    [\"The agent reads the description line of every skill\", \"Not the name, and not the folder. The description is the line it matches.\"],\n    [\"One description matches your words\", \"This is where leading words pay off. Use the words you really type.\"],\n    [\"The skill runs\", \"It fired only because its description matched your request.\"]\n  ];\n  var at = 0;\n  return function (values, root, changed) {\n    if (changed === \"reset\") at = 0;\n    else if (changed === \"step\") at = Math.min(at + 1, notes.length - 1);\n    var svg = root.querySelector(\"svg.proc\");\n    if (svg) svg.setAttribute(\"data-at\", String(at));\n    var head = root.querySelector(\"[data-head]\");\n    var note = root.querySelector(\"[data-note]\");\n    if (head) head.textContent = notes[at][0];\n    if (note) note.textContent = notes[at][1];\n  };\n})()"
+      }
+    },
+    {
+      "id": "s2",
+      "tag": "the trigger",
+      "kind": "choice",
+      "prompt": "Your agent has ten skills. What decides which one it uses for your request?",
+      "figure": {
+        "type": "svg",
+        "content": "<svg class=\"deck\" viewBox=\"0 0 300 214\" width=\"100%\" style=\"height:auto\" role=\"img\" aria-labelledby=\"deck-title\">\n<title id=\"deck-title\">Your request at the top, and six skills under it. Every skill is a card with a name and a description line.</title>\n<style>\n  svg.deck { font-family: var(--font-sans); }\n  svg.deck text { fill: var(--ink); }\n  svg.deck .k-req { fill: var(--surface-2); stroke: var(--border-strong); stroke-width: 1.5; }\n  svg.deck .k-rl { font-size: var(--text-xs); fill: var(--muted); }\n  svg.deck .k-rb { font-size: var(--text-sm); font-weight: 600; }\n  svg.deck .k-card { fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.5; }\n  svg.deck .k-nb { fill: var(--border-strong); }\n  svg.deck .k-dl { fill: var(--border); }\n  svg.deck .k-more { font-size: var(--text-xs); fill: var(--muted); }\n</style>\n<rect class=\"k-req\" x=\"6\" y=\"6\" width=\"288\" height=\"46\" rx=\"10\"/>\n<text class=\"k-rl\" x=\"18\" y=\"26\">Your request</text>\n<text class=\"k-rb\" x=\"18\" y=\"44\">check my links</text>\n<rect class=\"k-card\" x=\"6\" y=\"60\" width=\"90\" height=\"58\" rx=\"8\"/><rect class=\"k-nb\" x=\"18\" y=\"72\" width=\"40\" height=\"8\" rx=\"4\"/><rect class=\"k-dl\" x=\"18\" y=\"90\" width=\"66\" height=\"6\" rx=\"3\"/><rect class=\"k-dl\" x=\"18\" y=\"100\" width=\"48\" height=\"6\" rx=\"3\"/><rect class=\"k-card\" x=\"105\" y=\"60\" width=\"90\" height=\"58\" rx=\"8\"/><rect class=\"k-nb\" x=\"117\" y=\"72\" width=\"40\" height=\"8\" rx=\"4\"/><rect class=\"k-dl\" x=\"117\" y=\"90\" width=\"66\" height=\"6\" rx=\"3\"/><rect class=\"k-dl\" x=\"117\" y=\"100\" width=\"48\" height=\"6\" rx=\"3\"/><rect class=\"k-card\" x=\"204\" y=\"60\" width=\"90\" height=\"58\" rx=\"8\"/><rect class=\"k-nb\" x=\"216\" y=\"72\" width=\"40\" height=\"8\" rx=\"4\"/><rect class=\"k-dl\" x=\"216\" y=\"90\" width=\"66\" height=\"6\" rx=\"3\"/><rect class=\"k-dl\" x=\"216\" y=\"100\" width=\"48\" height=\"6\" rx=\"3\"/><rect class=\"k-card\" x=\"6\" y=\"126\" width=\"90\" height=\"58\" rx=\"8\"/><rect class=\"k-nb\" x=\"18\" y=\"138\" width=\"40\" height=\"8\" rx=\"4\"/><rect class=\"k-dl\" x=\"18\" y=\"156\" width=\"66\" height=\"6\" rx=\"3\"/><rect class=\"k-dl\" x=\"18\" y=\"166\" width=\"48\" height=\"6\" rx=\"3\"/><rect class=\"k-card\" x=\"105\" y=\"126\" width=\"90\" height=\"58\" rx=\"8\"/><rect class=\"k-nb\" x=\"117\" y=\"138\" width=\"40\" height=\"8\" rx=\"4\"/><rect class=\"k-dl\" x=\"117\" y=\"156\" width=\"66\" height=\"6\" rx=\"3\"/><rect class=\"k-dl\" x=\"117\" y=\"166\" width=\"48\" height=\"6\" rx=\"3\"/><rect class=\"k-card\" x=\"204\" y=\"126\" width=\"90\" height=\"58\" rx=\"8\"/><rect class=\"k-nb\" x=\"216\" y=\"138\" width=\"40\" height=\"8\" rx=\"4\"/><rect class=\"k-dl\" x=\"216\" y=\"156\" width=\"66\" height=\"6\" rx=\"3\"/><rect class=\"k-dl\" x=\"216\" y=\"166\" width=\"48\" height=\"6\" rx=\"3\"/>\n<text class=\"k-more\" x=\"150\" y=\"206\" text-anchor=\"middle\">six of your ten skills</text>\n</svg>",
+        "caption": "Ten skills sit on disk. Each one is a file with a name and a description line."
+      },
+      "options": [
+        "The words in each skill's description",
+        "The name of each skill's folder",
+        "How long each skill's file is",
+        "The order the skills were installed in"
+      ],
+      "answer": 0,
+      "feedback": "The agent reads the one-line description of every skill and matches it against your request. That line is the trigger. Everything else is a label.",
+      "misconception": {
+        "1": "The folder name is only a label. Renaming the folder changes nothing about when the skill runs.",
+        "2": "Length does not matter. A short, clear description beats a long one.",
+        "3": "Install order is not a signal. The description is the only thing matched."
+      }
+    },
+    {
+      "id": "s3",
+      "tag": "measuring the odds",
+      "kind": "explore",
+      "prompt": "Move the two sliders and watch the chance the agent fires.",
+      "widget": {
+        "caption": "Words you really type add about 12 points each. Vague words take about 9 away.",
+        "html": "<svg class=\"chart\" viewBox=\"0 0 260 208\" width=\"100%\" style=\"height:auto\" role=\"img\" aria-labelledby=\"chart-title\">\n<title id=\"chart-title\">A bar chart of the chance the agent fires. One bar counts the words you really type, one counts the vague words, and a line across the chart marks the chance to fire.</title>\n<style>\n  svg.chart { font-family: var(--font-sans); }\n  svg.chart text { fill: var(--ink); }\n  svg.chart .c-ax { font-size: var(--text-xs); fill: var(--muted); }\n  svg.chart .c-grid { stroke: var(--border); stroke-width: 1; stroke-dasharray: 3 3; }\n  svg.chart .c-axis { stroke: var(--border-strong); stroke-width: 1.5; }\n  svg.chart .c-bar { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(0); }\n  svg.chart .c-bar-a { fill: var(--accent); }\n  svg.chart .c-bar-b { fill: var(--warning); }\n  svg.chart .c-bt { font-size: var(--text-xs); font-weight: 700; }\n  svg.chart .c-bt-a { fill: var(--accent); }\n  svg.chart .c-bt-b { fill: var(--warning); }\n  svg.chart .c-verdict { transform: translateY(158px); }\n  svg.chart .c-v-line { stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; }\n  svg.chart .c-v-chip { fill: var(--accent); }\n  svg.chart .c-v-text { fill: var(--accent-ink); font-size: var(--text-xs); font-weight: 700; }\n  @media (prefers-reduced-motion: no-preference) {\n    svg.chart .c-bar { transition: transform 450ms var(--ease); }\n    svg.chart .c-verdict, svg.chart .c-bar-lab { transition: transform 450ms var(--ease); }\n  }\n</style>\n<text class=\"c-ax\" x=\"4\" y=\"12\">Chance the agent fires</text>\n<line class=\"c-axis\" x1=\"44\" y1=\"24\" x2=\"44\" y2=\"158\"/>\n<line class=\"c-grid\" x1=\"44\" y1=\"24\" x2=\"254\" y2=\"24\"/>\n<line class=\"c-grid\" x1=\"44\" y1=\"91\" x2=\"254\" y2=\"91\"/>\n<line class=\"c-axis\" x1=\"44\" y1=\"158\" x2=\"254\" y2=\"158\"/>\n<text class=\"c-ax\" x=\"38\" y=\"28\" text-anchor=\"end\">100%</text>\n<text class=\"c-ax\" x=\"38\" y=\"95\" text-anchor=\"end\">50%</text>\n<text class=\"c-ax\" x=\"38\" y=\"162\" text-anchor=\"end\">0%</text>\n<rect class=\"c-bar c-bar-a\" data-bar-a x=\"54\" y=\"24\" width=\"48\" height=\"134\"/>\n<rect class=\"c-bar c-bar-b\" data-bar-b x=\"156\" y=\"24\" width=\"48\" height=\"134\"/>\n<g class=\"c-bar-lab\" data-lab-a><text class=\"c-bt c-bt-a\" data-lab-a-text x=\"78\" y=\"154\" text-anchor=\"middle\">0%</text></g>\n<g class=\"c-bar-lab\" data-lab-b><text class=\"c-bt c-bt-b\" data-lab-b-text x=\"180\" y=\"154\" text-anchor=\"middle\">0%</text></g>\n<text class=\"c-ax\" x=\"78\" y=\"176\" text-anchor=\"middle\">words you type</text>\n<text class=\"c-ax\" x=\"180\" y=\"176\" text-anchor=\"middle\">vague words</text>\n<g class=\"c-verdict\" data-verdict-g>\n  <line class=\"c-v-line\" x1=\"46\" y1=\"0\" x2=\"212\" y2=\"0\"/>\n  <rect class=\"c-v-chip\" x=\"214\" y=\"-17\" width=\"40\" height=\"17\" rx=\"8\"/>\n  <text class=\"c-v-text\" data-verdict-pct x=\"234\" y=\"-4.5\" text-anchor=\"middle\">0%</text>\n</g>\n<text class=\"c-ax\" x=\"4\" y=\"194\">Every word you type adds 12 points.</text>\n<text class=\"c-ax\" x=\"4\" y=\"206\">Every vague word takes 9 away.</text>\n</svg>\n<p data-verdict-line style=\"margin: var(--space-3) 0 0; font-weight: 600\"></p>",
+        "controls": [
+          {
+            "type": "range",
+            "name": "real",
+            "label": "Words you really type",
+            "min": 0,
+            "max": 8,
+            "step": 1,
+            "value": 3
+          },
+          {
+            "type": "range",
+            "name": "vague",
+            "label": "Vague words, like helper",
+            "min": 0,
+            "max": 8,
+            "step": 1,
+            "value": 1
+          }
+        ],
+        "js": "function (values, root) {\n  var real = Number(values.real) || 0;\n  var vague = Number(values.vague) || 0;\n  var up = Math.min(100, real * 12);\n  var down = Math.min(100, vague * 9);\n  var net = Math.max(0, up - down);\n  var span = 134;\n  var svg = root.querySelector(\"svg.chart\");\n  if (!svg) return;\n  svg.querySelector(\"[data-bar-a]\").style.transform = \"scaleY(\" + (up / 100).toFixed(4) + \")\";\n  svg.querySelector(\"[data-bar-b]\").style.transform = \"scaleY(\" + (down / 100).toFixed(4) + \")\";\n  svg.querySelector(\"[data-lab-a]\").style.transform = \"translateY(\" + (-up / 100 * span).toFixed(2) + \"px)\";\n  svg.querySelector(\"[data-lab-b]\").style.transform = \"translateY(\" + (-down / 100 * span).toFixed(2) + \"px)\";\n  svg.querySelector(\"[data-lab-a-text]\").textContent = Math.round(up) + \"%\";\n  svg.querySelector(\"[data-lab-b-text]\").textContent = Math.round(down) + \"%\";\n  svg.querySelector(\"[data-verdict-g]\").style.transform = \"translateY(\" + (158 - net / 100 * span).toFixed(2) + \"px)\";\n  svg.querySelector(\"[data-verdict-pct]\").textContent = Math.round(net) + \"%\";\n  var out = root.querySelector(\"[data-verdict-line]\");\n  if (out) out.textContent = say(net);\n  function say(n) {\n    if (n >= 75) return \"Bets on. The description carries the words you really type, so the agent finds this skill.\";\n    if (n >= 45) return \"A coin toss. One more word you really type would tip it.\";\n    if (n >= 20) return \"Weak. The vague words are drowning the words that match.\";\n    return \"Almost silent. Nothing here matches what you type, so the skill stays quiet.\";\n  }\n}"
+      }
+    },
+    {
+      "id": "s4",
+      "tag": "leading words",
+      "kind": "sort",
+      "prompt": "Drag each description into the right side. Which lines could an agent match against your words?",
+      "buckets": [
+        "Words an agent can match",
+        "Words too vague to match"
+      ],
+      "items": [
+        {
+          "text": "check links before publishing",
+          "bucket": 0
+        },
+        {
+          "text": "a helpful little helper",
+          "bucket": 1
+        },
+        {
+          "text": "verify every link on a page",
+          "bucket": 0
+        },
+        {
+          "text": "does some useful stuff",
+          "bucket": 1
+        }
+      ],
+      "feedback": "The agent matches your words against the description. Words you really type, like check links or verify, are matchable. Words like helper or useful match nothing, so the skill stays quiet.",
+      "misconception": "It feels safer to describe a skill in general terms. But a general description gives the agent nothing to match, so the skill almost never fires."
+    },
+    {
+      "id": "s5",
+      "tag": "the parts",
+      "kind": "match",
+      "prompt": "Match each part to what it does.",
+      "figure": {
+        "type": "svg",
+        "content": "<svg class=\"mapfig\" viewBox=\"0 0 300 216\" width=\"100%\" style=\"height:auto\" role=\"img\" aria-labelledby=\"map-title\">\n<title id=\"map-title\">One skill file, drawn as a card. A frontmatter block sits at the top and the body sits below it.</title>\n<style>\n  svg.mapfig { font-family: var(--font-sans); }\n  svg.mapfig text { fill: var(--ink); }\n  svg.mapfig .m-card { fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.5; }\n  svg.mapfig .m-band { fill: var(--surface-2); stroke: var(--border); stroke-width: 1; }\n  svg.mapfig .m-code { font-family: var(--font-mono); font-size: var(--text-xs); fill: var(--ink); }\n  svg.mapfig .m-cap { font-size: var(--text-xs); fill: var(--muted); }\n  svg.mapfig .m-head { font-family: var(--font-mono); font-size: var(--text-xs); fill: var(--muted); }\n</style>\n<rect class=\"m-card\" x=\"6\" y=\"6\" width=\"288\" height=\"204\" rx=\"10\"/>\n<text class=\"m-head\" x=\"18\" y=\"28\">SKILL.md</text>\n<text class=\"m-cap\" x=\"18\" y=\"48\">frontmatter</text>\n<rect class=\"m-band\" x=\"18\" y=\"54\" width=\"264\" height=\"66\" rx=\"6\"/>\n<text class=\"m-code\" x=\"28\" y=\"72\">name: 442-check-links</text>\n<text class=\"m-code\" x=\"28\" y=\"88\">description: Check links</text>\n<text class=\"m-code\" x=\"28\" y=\"104\">disable-model-invocation: false</text>\n<text class=\"m-cap\" x=\"18\" y=\"140\">body</text>\n<rect class=\"m-band\" x=\"18\" y=\"146\" width=\"264\" height=\"56\" rx=\"6\"/>\n<text class=\"m-code\" x=\"28\" y=\"164\"># Check links</text>\n<text class=\"m-code\" x=\"28\" y=\"180\">1. Open the page</text>\n<text class=\"m-code\" x=\"28\" y=\"196\">2. Report every dead link</text>\n</svg>",
+        "caption": "The file has two parts: a frontmatter block at the top, and a body under it."
+      },
+      "lefts": [
+        "name",
+        "description",
+        "disable-model-invocation",
+        "the steps"
+      ],
+      "rights": [
+        "the trigger: when the agent may use the skill",
+        "stops the agent using it on its own",
+        "must match the folder the skill sits in",
+        "each one ends when it is done"
+      ],
+      "answer": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "feedback": "The name is a label and must match its folder. The description is the trigger. disable-model-invocation keeps the agent's hands off until you ask. Each step ends when it is done, so the agent knows where it is.",
+      "misconception": "It is easy to swap the name and the description. Only the description makes the skill fire; the name is just a label."
+    },
+    {
+      "id": "s6",
+      "tag": "keeping the agent out",
+      "kind": "explore",
+      "prompt": "Flip the switch and watch what the agent does.",
+      "widget": {
+        "caption": "This is what disable-model-invocation does: it turns a skill into one that waits for you.",
+        "html": "<svg class=\"state\" viewBox=\"0 0 260 176\" data-on=\"0\" width=\"100%\" style=\"height:auto\" role=\"img\" aria-labelledby=\"state-title\">\n<title id=\"state-title\">The agent and a skill file. With the switch off a pulse travels from the agent into the skill. With the switch on the link is blocked, the skill is dimmed, and its badge says it is waiting for you.</title>\n<style>\n  svg.state { font-family: var(--font-sans); }\n  svg.state text { fill: var(--ink); }\n  svg.state .s-lbl { font-size: var(--text-xs); fill: var(--muted); }\n  svg.state .s-box { fill: var(--surface-2); stroke: var(--border-strong); stroke-width: 1.5; }\n  svg.state .s-card { fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.5; }\n  svg.state .s-name { font-size: var(--text-sm); font-weight: 700; }\n  svg.state .s-code { font-family: var(--font-mono); font-size: var(--text-xs); fill: var(--ink-2); }\n  svg.state .s-rule { stroke: var(--border); stroke-width: 1; }\n  svg.state .s-wire { fill: none; stroke: var(--accent); stroke-width: 2.5; }\n  svg.state .s-pulse { fill: var(--accent); }\n  svg.state .s-gate { opacity: 0; }\n  svg.state .s-badge { fill: var(--success-soft); stroke: var(--success); stroke-width: 1.5; }\n  svg.state .s-badge-t { font-size: var(--text-xs); font-weight: 700; fill: var(--success); }\n  svg.state .s-mark-off { fill: var(--success); }\n  svg.state .s-mark-on { fill: var(--accent); opacity: 0; }\n  svg.state[data-on=\"1\"] .s-card { opacity: 0.45; stroke-dasharray: 6 4; }\n  svg.state[data-on=\"1\"] .s-wire { stroke: var(--border-strong); stroke-width: 2; stroke-dasharray: 6 5; opacity: 0.6; }\n  svg.state[data-on=\"1\"] .s-pulse { opacity: 0; }\n  svg.state[data-on=\"1\"] .s-gate { opacity: 1; }\n  svg.state[data-on=\"1\"] .s-badge { fill: var(--accent-soft); stroke: var(--accent); }\n  svg.state[data-on=\"1\"] .s-badge-t { fill: var(--accent); }\n  svg.state[data-on=\"1\"] .s-mark-off { opacity: 0; }\n  svg.state[data-on=\"1\"] .s-mark-on { opacity: 1; }\n  @media (prefers-reduced-motion: no-preference) {\n    svg.state .s-card, svg.state .s-wire, svg.state .s-pulse, svg.state .s-gate,\n    svg.state .s-badge, svg.state .s-badge-t, svg.state .s-mark-off, svg.state .s-mark-on { transition: opacity 350ms var(--ease), fill 350ms var(--ease), stroke 350ms var(--ease); }\n    svg.state[data-on=\"0\"] .s-pulse { animation: state-go 1300ms linear infinite; }\n  }\n  @keyframes state-go { 0% { transform: translateX(6px); opacity: 0.35; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { transform: translateX(28px); opacity: 0; } }\n</style>\n<defs>\n  <marker id=\"state-arrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"10\" markerHeight=\"10\" markerUnits=\"userSpaceOnUse\" orient=\"auto\">\n    <path d=\"M0 0 L10 5 L0 10 Z\" fill=\"context-stroke\"/>\n  </marker>\n</defs>\n<rect class=\"s-box\" x=\"4\" y=\"52\" width=\"78\" height=\"56\" rx=\"10\"/>\n<text class=\"s-name\" x=\"43\" y=\"86\" text-anchor=\"middle\">Agent</text>\n<path class=\"s-wire\" d=\"M82 80 H 110\" marker-end=\"url(#state-arrow)\"/>\n<circle class=\"s-pulse\" cx=\"82\" cy=\"80\" r=\"5.5\"/>\n<rect class=\"s-gate\" x=\"96\" y=\"69\" width=\"7\" height=\"22\" rx=\"3.5\" fill=\"var(--border-strong)\"/>\n<rect class=\"s-card\" x=\"118\" y=\"26\" width=\"136\" height=\"112\" rx=\"10\"/>\n<text class=\"s-lbl\" x=\"128\" y=\"46\">SKILL.md</text>\n<line class=\"s-rule\" x1=\"128\" y1=\"52\" x2=\"244\" y2=\"52\"/>\n<text class=\"s-code\" x=\"128\" y=\"72\">disable-model-</text>\n<text class=\"s-code\" x=\"128\" y=\"88\">invocation:</text>\n<text class=\"s-code\" data-flag x=\"128\" y=\"110\" font-size=\"var(--text-base)\" font-weight=\"700\" fill=\"var(--uw-purple)\">false</text>\n<text class=\"s-lbl\" x=\"128\" y=\"128\">read before it runs</text>\n<rect class=\"s-badge\" x=\"118\" y=\"146\" width=\"136\" height=\"26\" rx=\"13\"/>\n<path class=\"s-mark-off\" d=\"M130 153 L142 159 L130 165 Z\"/>\n<g class=\"s-mark-on\"><rect x=\"130\" y=\"153\" width=\"4\" height=\"12\" rx=\"2\"/><rect x=\"137\" y=\"153\" width=\"4\" height=\"12\" rx=\"2\"/></g>\n<text class=\"s-badge-t\" data-badge x=\"152\" y=\"163\">Runs on its own</text>\n</svg>\n<p data-note style=\"margin: var(--space-3) 0 0\"></p>",
+        "controls": [
+          {
+            "type": "switch",
+            "name": "only",
+            "label": "Only run when I ask",
+            "value": false
+          }
+        ],
+        "js": "function (values, root) {\n  var on = !!values.only;\n  var svg = root.querySelector(\"svg.state\");\n  if (!svg) return;\n  svg.setAttribute(\"data-on\", on ? \"1\" : \"0\");\n  svg.querySelector(\"[data-flag]\").textContent = on ? \"true\" : \"false\";\n  svg.querySelector(\"[data-badge]\").textContent = on ? \"Waiting for you\" : \"Runs on its own\";\n  var note = root.querySelector(\"[data-note]\");\n  if (note) note.textContent = on\n    ? \"The agent leaves this skill alone. It runs only when you type its name, so nothing starts by surprise.\"\n    : \"The agent may start this skill on its own whenever your request sounds related.\";\n}"
+      }
+    },
+    {
+      "id": "s7",
+      "tag": "keeping the agent out",
+      "kind": "short",
+      "prompt": "Write the frontmatter key that stops the agent using a skill on its own.",
+      "figure": {
+        "type": "svg",
+        "content": "<svg class=\"blankfig\" viewBox=\"0 0 300 180\" width=\"100%\" style=\"height:auto\" role=\"img\" aria-labelledby=\"blank-title\">\n<title id=\"blank-title\">A skill file with its frontmatter open. Two lines are filled in, and one line is left as an empty slot.</title>\n<style>\n  svg.blankfig { font-family: var(--font-sans); }\n  svg.blankfig text { fill: var(--ink); }\n  svg.blankfig .b-card { fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.5; }\n  svg.blankfig .b-band { fill: var(--surface-2); stroke: var(--border); stroke-width: 1; }\n  svg.blankfig .b-code { font-family: var(--font-mono); font-size: var(--text-xs); fill: var(--ink); }\n  svg.blankfig .b-head { font-family: var(--font-mono); font-size: var(--text-xs); fill: var(--muted); }\n  svg.blankfig .b-slot { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 7 5; }\n  svg.blankfig .b-q { font-size: var(--text-2xl); font-weight: 700; fill: var(--accent); }\n</style>\n<rect class=\"b-card\" x=\"6\" y=\"6\" width=\"288\" height=\"168\" rx=\"10\"/>\n<text class=\"b-head\" x=\"18\" y=\"28\">SKILL.md</text>\n<rect class=\"b-band\" x=\"18\" y=\"40\" width=\"264\" height=\"118\" rx=\"6\"/>\n<text class=\"b-code\" x=\"28\" y=\"62\">name: 442-check-links</text>\n<text class=\"b-code\" x=\"28\" y=\"82\">description: Check links</text>\n<rect class=\"b-slot\" x=\"28\" y=\"96\" width=\"244\" height=\"44\" rx=\"6\"/>\n<text class=\"b-q\" x=\"150\" y=\"128\" text-anchor=\"middle\">?</text>\n</svg>",
+        "caption": "Two lines are written. The third is the one you are about to name."
+      },
+      "answer": [
+        "disable-model-invocation",
+        "disable_model_invocation",
+        "disable model invocation"
+      ],
+      "feedback": "Set disable-model-invocation: true in the frontmatter. The agent then leaves the skill alone until you type its name. Use it for anything risky, like sending mail or deleting files.",
+      "misconception": "Many people try deleting the description instead. The key that does the job is disable-model-invocation."
+    },
+    {
+      "id": "s8",
+      "tag": "building one",
+      "kind": "order",
+      "prompt": "Drag these into the order that works best.",
+      "figure": {
+        "type": "svg",
+        "content": "<svg class=\"anat\" viewBox=\"0 0 300 276\" width=\"100%\" style=\"height:auto\" role=\"img\" aria-labelledby=\"anat-title\">\n<title id=\"anat-title\">A skill file drawn as a card: the frontmatter holds the name, the description and disable-model-invocation, and the body holds the steps. Tap a part to read what it does.</title>\n<style>\n  svg.anat { font-family: var(--font-sans); }\n  svg.anat text { fill: var(--ink); }\n  svg.anat .a-card { fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.5; }\n  svg.anat .a-band { fill: var(--surface-2); stroke: var(--border); stroke-width: 1; }\n  svg.anat .a-code { font-family: var(--font-mono); font-size: var(--text-xs); fill: var(--ink); }\n  svg.anat .a-code-b { font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 700; fill: var(--ink); }\n  svg.anat .a-head { font-family: var(--font-mono); font-size: var(--text-xs); fill: var(--muted); }\n  svg.anat .a-part { fill: var(--surface); fill-opacity: 0.65; stroke: var(--border-strong); stroke-width: 1.5; stroke-dasharray: 6 4; }\n  svg.anat .a-part.reveal-on { fill: var(--accent-soft); fill-opacity: 1; stroke: var(--accent); stroke-dasharray: none; }\n</style>\n<rect class=\"a-card\" x=\"6\" y=\"6\" width=\"288\" height=\"264\" rx=\"10\"/>\n<text class=\"a-head\" x=\"20\" y=\"30\">SKILL.md</text>\n<rect class=\"a-band\" x=\"18\" y=\"40\" width=\"264\" height=\"110\" rx=\"6\"/>\n<text class=\"a-code\" x=\"36\" y=\"68\">name: 442-check-links</text>\n<text class=\"a-code\" x=\"36\" y=\"102\">description: Check links</text>\n<text class=\"a-code\" x=\"36\" y=\"135\">disable-model-invocation: false</text>\n<rect class=\"a-band\" x=\"18\" y=\"158\" width=\"264\" height=\"104\" rx=\"6\"/>\n<text class=\"a-code-b\" x=\"36\" y=\"186\"># Check links</text>\n<text class=\"a-code\" x=\"36\" y=\"206\">1. Open the page</text>\n<text class=\"a-code\" x=\"36\" y=\"224\">2. Report every dead link</text>\n<text class=\"a-code\" x=\"36\" y=\"242\">3. Stop when it is done</text>\n<rect class=\"a-part\" data-reveal=\"The name is a label. It has to match the folder the skill sits in.\" aria-label=\"name\" x=\"26\" y=\"48\" width=\"248\" height=\"30\" rx=\"5\"/><rect class=\"a-part\" data-reveal=\"The description is the trigger. The agent matches your words against this line.\" aria-label=\"description\" x=\"26\" y=\"82\" width=\"248\" height=\"30\" rx=\"5\"/><rect class=\"a-part\" data-reveal=\"disable-model-invocation: true keeps the agent's hands off. The skill then runs only when you type its name.\" aria-label=\"disable-model-invocation\" x=\"26\" y=\"116\" width=\"248\" height=\"28\" rx=\"5\"/><rect class=\"a-part\" data-reveal=\"The body is the steps. Each step ends when it is done, so the agent knows where it is.\" aria-label=\"the steps\" x=\"26\" y=\"164\" width=\"248\" height=\"92\" rx=\"5\"/>\n</svg>",
+        "caption": "Tap a part of the card to read what that part does."
+      },
+      "options": [
+        "Write the steps",
+        "Decide the one thing it does",
+        "Try it on a real request",
+        "Write the description"
+      ],
+      "answer": [
+        1,
+        3,
+        0,
+        2
+      ],
+      "feedback": "One job first, because it decides everything else. The description next, because that is the trigger. Then the steps. Then run it on a real request to see if it fires.",
+      "misconception": "Most people start with the steps. If the skill is trying to do too much, no amount of good steps will save it."
+    },
+    {
+      "id": "s9",
+      "tag": "what makes a skill fire",
+      "kind": "multi",
+      "prompt": "Which of these make an agent more likely to use your skill? Pick all that apply.",
+      "options": [
+        "A description that uses the words you really type",
+        "One clear job, not three",
+        "A body so long that the steps are buried",
+        "A name that matches its folder"
+      ],
+      "answer": [
+        0,
+        1,
+        3
+      ],
+      "feedback": "The agent matches your words against the description, so use the words you type. One clear job makes the skill easy to pick. A name that matches its folder keeps the skill findable.",
+      "misconception": {
+        "2": "A long body pushes the steps down, and the agent starts skipping them. Move the bulk into a file the skill points to."
+      }
+    },
+    {
+      "id": "s10",
+      "tag": "linking skills",
+      "kind": "choice",
+      "prompt": "You want one skill to hand work to another. What makes that happen?",
+      "figure": {
+        "type": "svg",
+        "content": "<svg class=\"linkfig\" viewBox=\"0 0 300 132\" width=\"100%\" style=\"height:auto\" role=\"img\" aria-labelledby=\"link-title\">\n<title id=\"link-title\">Two skill files, side by side, with a dashed arrow between them and a question mark above it.</title>\n<style>\n  svg.linkfig { font-family: var(--font-sans); }\n  svg.linkfig text { fill: var(--ink); }\n  svg.linkfig .n-card { fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.5; }\n  svg.linkfig .n-head { font-family: var(--font-mono); font-size: var(--text-xs); fill: var(--muted); }\n  svg.linkfig .n-nm { font-family: var(--font-mono); font-size: var(--text-xs); fill: var(--ink); }\n  svg.linkfig .n-dl { fill: var(--border); }\n  svg.linkfig .n-lnk { fill: none; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 6 5; }\n  svg.linkfig .n-q { font-size: var(--text-sm); font-weight: 700; fill: var(--accent); }\n  @media (prefers-reduced-motion: no-preference) {\n    svg.linkfig .n-lnk { animation: link-march 1200ms linear infinite; }\n  }\n  @keyframes link-march { to { stroke-dashoffset: -22; } }\n</style>\n<defs>\n  <marker id=\"link-arrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"10\" markerHeight=\"10\" markerUnits=\"userSpaceOnUse\" orient=\"auto\">\n    <path d=\"M0 0 L10 5 L0 10 Z\" fill=\"context-stroke\"/>\n  </marker>\n</defs>\n<rect class=\"n-card\" x=\"8\" y=\"12\" width=\"124\" height=\"100\" rx=\"10\"/>\n<text class=\"n-head\" x=\"20\" y=\"36\">SKILL.md</text>\n<text class=\"n-nm\" x=\"20\" y=\"60\">442-check-links</text>\n<rect class=\"n-dl\" x=\"20\" y=\"74\" width=\"100\" height=\"8\" rx=\"4\"/>\n<rect class=\"n-card\" x=\"168\" y=\"12\" width=\"124\" height=\"100\" rx=\"10\"/>\n<text class=\"n-head\" x=\"180\" y=\"36\">SKILL.md</text>\n<text class=\"n-nm\" x=\"180\" y=\"60\">442-report</text>\n<rect class=\"n-dl\" x=\"180\" y=\"74\" width=\"100\" height=\"8\" rx=\"4\"/>\n<path class=\"n-lnk\" d=\"M136 64 H 162\" marker-end=\"url(#link-arrow)\"/>\n<text class=\"n-q\" x=\"149\" y=\"50\" text-anchor=\"middle\">?</text>\n</svg>",
+        "caption": "Two skill files, one dashed link. What sets that link up?"
+      },
+      "options": [
+        "The first skill tells the agent to call the second one, by name",
+        "Both skills sit in the same folder",
+        "The second skill lists the first one in its description",
+        "The agent works it out from the file order"
+      ],
+      "answer": 0,
+      "feedback": "A skill hands off by telling the agent to call the other one and naming it, for example: Call the Skill tool with \"442-create-roadmap\". Nothing else links them.",
+      "misconception": {
+        "1": "Sharing a folder does not link skills. The hand-off is a line in the first skill's steps that names the second.",
+        "3": "The agent does not guess from file order. Write the hand-off down, or it will not happen."
+      }
+    }
+  ]
+}
+</script>
+
+<script>
+(function () {
+  "use strict";
+
+  /* The seven step kinds. `explore` is the only one that is not graded. */
+  var KINDS = ["choice", "multi", "short", "order", "sort", "match", "explore"];
+  var uid = 0;
+
+  // ---- read the spec and drop what cannot be rendered ----------------
+
+  var island = document.getElementById("spec");
+  var spec = {};
+  try { spec = JSON.parse((island && island.textContent) || "{}"); } catch (err) { spec = {}; }
+  if (!spec || typeof spec !== "object") spec = {};
+
+  var meta = (spec.meta && typeof spec.meta === "object") ? spec.meta : {};
+  var STEPS = prepareSteps(spec.steps);
+  var GRADED_TOTAL = 0;
+  STEPS.forEach(function (s) { if (s.kind !== "explore") GRADED_TOTAL += 1; });
+
+  function isArr(v) { return Array.isArray(v); }
+  function isNum(v) { return typeof v === "number" && isFinite(v); }
+  function inRange(v, n) { return isNum(v) && v === Math.floor(v) && v >= 0 && v < n; }
+  function isStrings(v, min) {
+    return isArr(v) && v.length >= min && v.every(function (s) { return typeof s === "string" && s.length > 0; });
+  }
+  function isPermutation(arr, n) {
+    if (!isArr(arr) || arr.length !== n) return false;
+    var seen = {};
+    for (var i = 0; i < arr.length; i += 1) {
+      if (!inRange(arr[i], n) || seen[arr[i]]) return false;
+      seen[arr[i]] = true;
+    }
+    return true;
+  }
+
+  function prepareSteps(list) {
+    if (!isArr(list)) return [];
+    var out = [];
+    list.forEach(function (s) {
+      if (!s || typeof s !== "object") return;
+      if (typeof s.prompt !== "string" || !s.prompt) return;
+      if (!s.kind) {
+        s.kind = (isArr(s.options) && s.options.length) ? "choice" : "short";
+      }
+      if (KINDS.indexOf(s.kind) === -1) return;
+      if (validStep(s)) out.push(s);
+    });
+    return out;
+  }
+
+  /* A step renders only when its own fields are complete. Anything else
+     is skipped, so one broken step cannot take the page down. */
+  function validStep(s) {
+    var k = s.kind;
+    if (k === "choice") {
+      return isStrings(s.options, 2) && s.options.length <= 5 && inRange(s.answer, s.options.length);
+    }
+    if (k === "multi") {
+      return isStrings(s.options, 1) && isArr(s.answer) && s.answer.length > 0 &&
+        s.answer.every(function (n) { return inRange(n, s.options.length); });
+    }
+    if (k === "short") {
+      var list = isArr(s.answer) ? s.answer : [s.answer];
+      return list.some(function (a) { return typeof a === "string" && norm(a); });
+    }
+    if (k === "order") {
+      return isStrings(s.options, 2) && isPermutation(s.answer, s.options.length);
+    }
+    if (k === "sort") {
+      if (!isStrings(s.buckets, 2) || s.buckets.length > 3) return false;
+      return isArr(s.items) && s.items.length > 0 && s.items.every(function (item) {
+        return item && typeof item.text === "string" && item.text && inRange(item.bucket, s.buckets.length);
+      });
+    }
+    if (k === "match") {
+      return isStrings(s.lefts, 1) && isStrings(s.rights, 1) && isArr(s.answer) &&
+        s.answer.length === s.lefts.length &&
+        s.answer.every(function (n) { return inRange(n, s.rights.length); });
+    }
+    if (k === "explore") {
+      var w = s.widget;
+      return !!(w && typeof w === "object" && (typeof w.html === "string" || typeof w.js === "string"));
+    }
+    return false;
+  }
+
+  // ---- page furniture -------------------------------------------------
+
+  var app = document.getElementById("app");
+  var titleEl = document.getElementById("page-title");
+  var goalEl = document.getElementById("page-goal");
+
+  var title = (typeof meta.title === "string" && meta.title) ? meta.title : "Practice exercise";
+  titleEl.textContent = title;
+  document.title = title;
+  if (typeof meta.goal === "string" && meta.goal) goalEl.textContent = meta.goal;
+  else if (goalEl) goalEl.remove();
+
+  // An exercise may carry its own styles for a bespoke visual. They go in
+  // last, so the exercise can extend the page without re-styling it.
+  if (typeof meta.style === "string" && meta.style.trim()) {
+    var specStyle = document.createElement("style");
+    specStyle.setAttribute("data-from", "spec");
+    specStyle.textContent = meta.style;
+    document.head.appendChild(specStyle);
+  }
+
+  var latest = new Map();   // step index -> true when the latest try was right
+  var screen = "intro";
+  var queue = [];           // step indices in this round, in order
+  var pos = 0;
+  var round = 1;
+  var activeRoot = null;    // the widget play area on screen, for timer cleanup
+
+  function el(tag, attrs, kids) {
+    var node = document.createElement(tag);
+    if (attrs) {
+      Object.keys(attrs).forEach(function (k) {
+        var v = attrs[k];
+        if (v === null || v === undefined || v === false) return;
+        if (k === "class") node.className = v;
+        else if (k === "text") node.textContent = v;
+        else if (k.slice(0, 2) === "on") node[k] = v;
+        else node.setAttribute(k, v === true ? "" : String(v));
+      });
+    }
+    if (kids) {
+      (isArr(kids) ? kids : [kids]).forEach(function (kid) {
+        if (kid) node.appendChild(kid);
+      });
+    }
+    return node;
+  }
+
+  function svg(tag, attrs, kids) {
+    var node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    Object.keys(attrs).forEach(function (k) { node.setAttribute(k, attrs[k]); });
+    if (kids) kids.forEach(function (kid) { node.appendChild(kid); });
+    return node;
+  }
+
+  function chevron(up) {
+    return svg("svg", {
+      class: "ic", viewBox: "0 0 24 24", width: "20", height: "20",
+      "aria-hidden": "true", focusable: "false"
+    }, [
+      svg("path", {
+        d: up ? "M6 15l6-6 6 6" : "M6 9l6 6 6-6",
+        fill: "none", stroke: "currentColor", "stroke-width": "2",
+        "stroke-linecap": "round", "stroke-linejoin": "round"
+      })
+    ]);
+  }
+
+  function mark(node, text) {
+    node.appendChild(el("span", { class: "opt-mark", text: text }));
+  }
+
+  function pair(label, value) {
+    return el("p", { class: "pair" }, [
+      el("span", { class: "pair-l", text: label }),
+      el("span", { class: "pair-v" }, value)
+    ]);
+  }
+
+  /* A widget may park a timer id on its play area as root.__timer. The
+     engine clears it here, so a step that leaves the screen leaves no
+     timer behind. Prefer a CSS transition over a timer when you can. */
+  function releaseWidget() {
+    var root = activeRoot;
+    activeRoot = null;
+    if (!root) return;
+    var t = root.__timer;
+    if (t === null || t === undefined) return;
+    try { clearTimeout(t); clearInterval(t); } catch (err) { /* not a timer id */ }
+    root.__timer = null;
+  }
+
+  function clear() {
+    releaseWidget();
+    while (app.firstChild) app.removeChild(app.firstChild);
+  }
+
+  // ---- grading --------------------------------------------------------
+
+  function norm(v) {
+    return String(v === null || v === undefined ? "" : v)
+      .toLowerCase().trim().replace(/\s+/g, " ").replace(/[.;,!?]+$/, "");
+  }
+
+  function accepted(step) {
+    var list = isArr(step.answer) ? step.answer : [step.answer];
+    return list.map(norm).filter(Boolean);
+  }
+
+  function sameOrder(a, b) {
+    if (!isArr(a) || a.length !== b.length) return false;
+    for (var i = 0; i < a.length; i += 1) { if (a[i] !== b[i]) return false; }
+    return true;
+  }
+
+  function sameSet(a, b) {
+    var x = a.slice().sort(function (p, q) { return p - q; });
+    var y = b.slice().sort(function (p, q) { return p - q; });
+    return sameOrder(x, y);
+  }
+
+  function isCorrect(step, given) {
+    switch (step.kind) {
+      case "choice":  return given === step.answer;
+      case "multi":   return isArr(given) && sameSet(given, step.answer);
+      case "short":   return accepted(step).indexOf(norm(given)) !== -1;
+      case "order":   return sameOrder(given, step.answer);
+      case "sort":    return step.items.every(function (item, i) { return given[i] === item.bucket; });
+      case "match":   return sameOrder(given, step.answer);
+      default:        return false;
+    }
+  }
+
+  /* The model answer is shown exactly as the author wrote it, so the
+     student reads the real spelling rather than the match key. */
+  function firstAnswer(step) {
+    var list = isArr(step.answer) ? step.answer : [step.answer];
+    var first = list.filter(function (a) { return typeof a === "string" && a.trim(); })[0];
+    return first || String(step.answer);
+  }
+
+  function modelAnswer(step) {
+    switch (step.kind) {
+      case "choice": return step.options[step.answer];
+      case "multi":  return step.answer.map(function (i) { return step.options[i]; }).join(", ");
+      case "short":  return firstAnswer(step);
+      case "order":  return step.answer.map(function (i) { return step.options[i]; }).join(", then ");
+      case "sort":   return step.items.map(function (item) {
+        return item.text + " in " + step.buckets[item.bucket];
+      }).join("; ");
+      case "match":  return step.lefts.map(function (left, i) {
+        return left + " with " + step.rights[step.answer[i]];
+      }).join("; ");
+      default:       return "";
+    }
+  }
+
+  function misconceptionKey(step, given) {
+    if (step.kind === "choice") return given;
+    if (step.kind === "multi") {
+      var wrong = (isArr(given) ? given : []).filter(function (i) { return step.answer.indexOf(i) === -1; });
+      wrong.sort(function (a, b) { return a - b; });
+      return wrong.length ? wrong[0] : "default";
+    }
+    return "default";
+  }
+
+  function misconceptionFor(step, key) {
+    var m = step.misconception;
+    if (!m) return "";
+    if (typeof m === "string") return m;
+    if (typeof m === "object") return m[String(key)] || m.default || "";
+    return "";
+  }
+
+  function criterion() {
+    var c = (meta.criterion && typeof meta.criterion === "object") ? meta.criterion : {};
+    var min = isNum(c.minCorrect) ? Math.round(c.minCorrect) : Math.ceil(GRADED_TOTAL * 0.8);
+    return {
+      text: typeof c.text === "string" ? c.text : "",
+      minCorrect: Math.max(0, Math.min(min, GRADED_TOTAL))
+    };
+  }
+
+  // ---- figure ---------------------------------------------------------
+
+  /* svg and html content is injected as markup, class names and ids and
+     all, so an author can ship an animated SVG that runs on its own CSS.
+     code content is shown in a pre block. Any element carrying data-reveal
+     becomes a tap or hover control that toggles its own caption. */
+  function renderFigure(step) {
+    var f = step.figure;
+    if (!f || typeof f !== "object" || typeof f.content !== "string" || !f.content) return null;
+
+    var fig = el("figure", { class: "fig" });
+    if (f.type === "code") {
+      fig.appendChild(el("pre", { class: "fig-code" }, el("code", { text: f.content })));
+    } else {
+      var body = el("div", { class: "fig-body" });
+      body.innerHTML = f.content;
+      fig.appendChild(body);
+      wireReveals(fig, body.querySelectorAll("[data-reveal]"));
+    }
+    if (typeof f.caption === "string" && f.caption) {
+      fig.appendChild(el("figcaption", { class: "fig-cap", text: f.caption }));
+    }
+    return fig;
+  }
+
+  function wireReveals(fig, nodes) {
+    if (!nodes || !nodes.length) return;
+    var wrap = el("div", { class: "reveals" });
+    Array.prototype.forEach.call(nodes, function (node) {
+      var text = node.getAttribute("data-reveal");
+      if (!text) return;
+      var cap = el("p", { class: "reveal-cap", text: text, hidden: true, id: "reveal-" + (uid += 1) });
+      node.classList.add("reveal");
+      node.setAttribute("tabindex", "0");
+      node.setAttribute("role", "button");
+      node.setAttribute("aria-expanded", "false");
+      node.setAttribute("aria-controls", cap.id);
+      wrap.appendChild(cap);
+
+      var on = false;
+      function show(next) {
+        on = (next === undefined) ? !on : next;
+        cap.hidden = !on;
+        node.setAttribute("aria-expanded", on ? "true" : "false");
+        node.classList.toggle("reveal-on", on);
+      }
+      node.addEventListener("click", function () { show(); });
+      node.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+          e.preventDefault();
+          show();
+        }
+      });
+      if (window.matchMedia && window.matchMedia("(hover: hover)").matches) {
+        node.addEventListener("mouseenter", function () { show(true); });
+        node.addEventListener("mouseleave", function () { show(false); });
+      }
+    });
+    if (wrap.firstChild) fig.appendChild(wrap);
+  }
+
+  // ---- widget ---------------------------------------------------------
+
+  /* The author's js is compiled here, once for the whole step, so a
+     closure can hold state between changes. The engine renders the
+     controls, keeps the current values, and calls
+
+       js(values, root, changed)
+
+     once with changed set to "init", and again on every control change
+     with changed set to that control's name. Update the DOM inside root
+     from the function. Prefer a CSS transition in your own markup over a
+     timer; if you do need one, park its id on root.__timer. */
+  function renderWidget(step) {
+    var w = step.widget;
+    if (!w || typeof w !== "object") return null;
+
+    var box = el("section", { class: "widget" });
+    var play = el("div", { class: "play" });
+    if (typeof w.html === "string") play.innerHTML = w.html;
+    box.appendChild(play);
+    activeRoot = play;
+
+    var values = {};
+    var fn = compile(w.js);
+    function run(changed) {
+      if (!fn) return;
+      try { fn(values, play, changed || "init"); } catch (err) { if (window.console) console.error(err); }
+    }
+
+    var controls = isArr(w.controls) ? w.controls : [];
+    if (controls.length) {
+      var wrap = el("div", { class: "controls" });
+      controls.forEach(function (c) {
+        var node = renderControl(c, values, run);
+        if (node) wrap.appendChild(node);
+      });
+      if (wrap.firstChild) box.appendChild(wrap);
+    }
+    if (typeof w.caption === "string" && w.caption) {
+      box.appendChild(el("p", { class: "widget-cap", text: w.caption }));
+    }
+    return { node: box, start: function () { run("init"); } };
+  }
+
+  function compile(src) {
+    if (typeof src !== "string" || !src.trim()) return null;
+    try {
+      var fn = (new Function("return (" + src + ");"))();
+      return typeof fn === "function" ? fn : null;
+    } catch (err) {
+      if (window.console) console.error(err);
+      return null;
+    }
+  }
+
+  function renderControl(c, values, run) {
+    if (!c || typeof c !== "object") return null;
+    var name = typeof c.name === "string" && c.name ? c.name : "value";
+    var label = typeof c.label === "string" && c.label ? c.label : name;
+    var id = "ctl-" + (uid += 1);
+
+    if (c.type === "range") {
+      var min = isNum(c.min) ? c.min : 0;
+      var max = isNum(c.max) ? c.max : 100;
+      var stepSize = isNum(c.step) ? c.step : 1;
+      var start = isNum(c.value) ? c.value : min;
+      values[name] = start;
+      var out = el("span", { class: "ctl-out", text: withUnit(start, c.unit) });
+      var range = el("input", {
+        class: "rng", id: id, type: "range",
+        min: min, max: max, step: stepSize, value: start
+      });
+      range.addEventListener("input", function () {
+        values[name] = Number(range.value);
+        out.textContent = withUnit(Number(range.value), c.unit);
+        run(name);
+      });
+      return el("div", { class: "ctl" }, [
+        el("label", { class: "ctl-lbl", for: id, text: label }),
+        el("div", { class: "ctl-row" }, [range, out])
+      ]);
+    }
+
+    if (c.type === "switch") {
+      values[name] = !!c.value;
+      var box = el("input", { class: "sw", id: id, type: "checkbox" });
+      box.checked = !!c.value;
+      box.addEventListener("change", function () { values[name] = box.checked; run(name); });
+      return el("div", { class: "ctl" }, [
+        el("label", { class: "ctl-switch", for: id }, [
+          box,
+          el("span", { class: "ctl-lbl", text: label })
+        ])
+      ]);
+    }
+
+    if (c.type === "select") {
+      var options = isArr(c.options) ? c.options : [];
+      var select = el("select", { class: "sel", id: id });
+      options.forEach(function (o) {
+        var v = (o && typeof o === "object") ? String(o.value) : String(o);
+        var t = (o && typeof o === "object" && o.label) ? String(o.label) : v;
+        select.appendChild(el("option", { value: v, text: t }));
+      });
+      var pick = (c.value !== undefined) ? String(c.value) : "";
+      if (pick) select.value = pick;
+      values[name] = select.value;
+      select.addEventListener("change", function () { values[name] = select.value; run(name); });
+      return el("div", { class: "ctl" }, [
+        el("label", { class: "ctl-lbl", for: id, text: label }),
+        select
+      ]);
+    }
+
+    /* A button counts presses. It starts at zero, adds one on every
+       click, and calls js after the count changes, so a Play, Step or
+       Reset animation is one counter in the author's closure. */
+    if (c.type === "button") {
+      values[name] = 0;
+      var press = el("button", { class: "btn btn-quiet ctl-btn", type: "button", text: label });
+      press.addEventListener("click", function () {
+        values[name] = (isNum(values[name]) ? values[name] : 0) + 1;
+        run(name);
+      });
+      return el("div", { class: "ctl" }, [press]);
+    }
+
+    return null;
+  }
+
+  function withUnit(v, unit) {
+    return String(v) + (typeof unit === "string" && unit ? " " + unit : "");
+  }
+
+  // ---- screens --------------------------------------------------------
+
+  /* One quiet fact and one bar. The bar carries the same words for a
+     screen reader through aria-valuetext, so the count is announced once. */
+  function progressBar(label) {
+    var n = queue.length;
+    var fill = el("div", { class: "bar-fill" });
+    var bar = el("div", {
+      class: "bar", role: "progressbar",
+      "aria-valuemin": "0", "aria-valuemax": String(n), "aria-valuenow": String(pos),
+      "aria-valuetext": label
+    }, fill);
+    fill.style.width = (n ? (pos / n) * 100 : 0) + "%";
+    return {
+      node: el("div", { class: "progress" }, [
+        el("p", { class: "progress-label", "aria-hidden": "true", text: label }),
+        bar
+      ]),
+      fill: fill, bar: bar, n: n
+    };
+  }
+
+  // "Keep going" links from meta.resources. Shown on the intro and the results.
+  function resourceList() {
+    var rs = Array.isArray(meta.resources) ? meta.resources.filter(function (r) {
+      return r && typeof r.label === "string" && typeof r.href === "string" && r.href;
+    }) : [];
+    if (!rs.length) return null;
+    return el("section", { class: "card card-quiet" }, [
+      el("h2", { class: "sub", text: "Keep going" }),
+      el("ul", { class: "resources" }, rs.map(function (r) {
+        return el("li", { class: "resource" }, [
+          el("a", {
+            class: "res-link", href: r.href, target: "_blank",
+            rel: "noopener noreferrer", text: r.label
+          }),
+          r.note ? el("span", { class: "res-note", text: r.note }) : null
+        ]);
+      }))
+    ]);
+  }
+
+  function renderIntro() {
+    clear();
+    var n = STEPS.length;
+    var ungraded = n - GRADED_TOTAL;
+    var c = criterion();
+
+    var figures = [
+      el("div", { class: "figure" }, [
+        el("span", { class: "figure-n", text: String(n) }),
+        el("span", { class: "figure-l", text: n === 1 ? "step" : "steps" })
+      ])
+    ];
+    if (isNum(meta.minutes)) {
+      figures.push(el("div", { class: "figure" }, [
+        el("span", { class: "figure-n", text: String(meta.minutes) }),
+        el("span", { class: "figure-l", text: meta.minutes === 1 ? "minute" : "minutes" })
+      ]));
+    }
+
+    var card = el("section", { class: "card" }, [
+      el("div", { class: "figures" }, figures),
+      ungraded
+        ? el("p", { class: "lead", text: ungraded === 1
+            ? "One step is not graded. Play with it and try things."
+            : ungraded + " steps are not graded. Play with those and try things." })
+        : null,
+      el("p", { class: "lead", text: "Answer each one before you check it. Trying first is what makes it stick." }),
+      c.text ? pair("Done means", document.createTextNode(c.text)) : null,
+      el("div", { class: "btn-row" }, [
+        el("button", { class: "btn btn-primary", type: "button", text: "Start", onclick: startRound })
+      ])
+    ]);
+    app.appendChild(card);
+    var introRes = resourceList();
+    if (introRes) app.appendChild(introRes);
+    var first = card.querySelector("button");
+    if (first) first.focus();
+  }
+
+  function startRound() {
+    screen = "question";
+    round = 1;
+    queue = STEPS.map(function (_, i) { return i; });
+    pos = 0;
+    render();
+  }
+
+  function startMissedRound(indices) {
+    screen = "question";
+    round += 1;
+    queue = indices.slice();
+    pos = 0;
+    render();
+  }
+
+  function render() {
+    if (!STEPS.length) {
+      clear();
+      app.appendChild(el("section", { class: "card" }, [
+        el("p", { class: "prompt", text: "This exercise has no steps yet." }),
+        el("p", { class: "lead", text: "The JSON in this page is empty or not valid. Add a meta block and a steps list." })
+      ]));
+      return;
+    }
+    if (screen === "intro") return renderIntro();
+    if (screen === "question") return renderQuestion();
+    return renderResults();
+  }
+
+  function renderQuestion() {
+    clear();
+    var i = queue[pos];
+    var step = STEPS[i];
+    var first = round === 1;
+    var label = (first ? "Step " : "Again, step ") + (pos + 1) + " of " + queue.length;
+    var p = progressBar(label);
+
+    var card = el("section", { class: "card", "data-step": String(i), "data-kind": step.kind });
+    card.appendChild(p.node);
+
+    var fig = renderFigure(step);
+    if (fig) card.appendChild(fig);
+
+    card.appendChild(el("h2", { class: "prompt", id: "prompt", tabindex: "-1", text: step.prompt }));
+
+    var widget = renderWidget(step);
+    if (widget) card.appendChild(widget.node);
+
+    if (step.kind === "explore") {
+      card.appendChild(el("div", { class: "answer" }, [
+        el("div", { class: "btn-row" }, [
+          el("button", { class: "btn btn-primary", type: "button", text: "Continue", onclick: function () { advance(p); } })
+        ])
+      ]));
+    } else {
+      card.appendChild(renderAnswer(step, i, p, card));
+    }
+
+    if (step.hint && first) {
+      var hintBox = el("p", { class: "hint", text: step.hint, hidden: true });
+      var hintBtn = el("button", {
+        class: "btn btn-quiet hint-btn", type: "button", text: "Show a hint",
+        onclick: function () { hintBox.hidden = false; hintBtn.remove(); }
+      });
+      card.appendChild(hintBtn);
+      card.appendChild(hintBox);
+    }
+
+    app.appendChild(card);
+    if (widget) widget.start();
+
+    var heading = card.querySelector(".prompt");
+    if (heading) heading.focus();
+  }
+
+  function renderAnswer(step, i, p, card) {
+    switch (step.kind) {
+      case "choice": return renderChoice(step, i, p, card);
+      case "multi":  return renderMulti(step, i, p, card);
+      case "short":  return renderShort(step, i, p, card);
+      case "order":  return renderOrder(step, i, p, card);
+      case "sort":   return renderAssign(step, i, p, card, "sort");
+      case "match":  return renderAssign(step, i, p, card, "match");
+      default:       return el("div");
+    }
+  }
+
+  function renderChoice(step, i, p, card) {
+    var list = el("div", { class: "opts", role: "group", "aria-label": "Choose one" });
+    step.options.forEach(function (text, idx) {
+      var btn = el("button", { class: "opt", type: "button" }, [
+        el("span", { class: "opt-key", text: String.fromCharCode(65 + idx) }),
+        el("span", { class: "opt-text", text: text })
+      ]);
+      btn.addEventListener("click", function () { submit_apply(i, idx, p, card); });
+      list.appendChild(btn);
+    });
+    return list;
+  }
+
+  /* A picked option gets a check in its key slot, so the picked state
+     never rides on the accent color alone. */
+  function renderMulti(step, i, p, card) {
+    var picked = [];
+    var list = el("div", { class: "opts", role: "group", "aria-label": "Choose every answer that fits" });
+    step.options.forEach(function (text, idx) {
+      var key = el("span", { class: "opt-key", text: String.fromCharCode(65 + idx) });
+      var btn = el("button", { class: "opt", type: "button", "aria-pressed": "false" }, [
+        key,
+        el("span", { class: "opt-text", text: text })
+      ]);
+      btn.addEventListener("click", function () {
+        var at = picked.indexOf(idx);
+        if (at === -1) picked.push(idx); else picked.splice(at, 1);
+        var on = at === -1;
+        btn.setAttribute("aria-pressed", on ? "true" : "false");
+        btn.setAttribute("data-picked", on ? "yes" : "no");
+        key.textContent = on ? "\u2713" : String.fromCharCode(65 + idx);
+      });
+      list.appendChild(btn);
+    });
+    var submitBtn = el("button", {
+      class: "btn btn-primary", type: "button", text: "Check answers",
+      onclick: function () { submit_apply(i, picked.slice(), p, card); }
+    });
+    return el("div", { class: "answer" }, [list, el("div", { class: "btn-row" }, [submitBtn])]);
+  }
+
+  function renderShort(step, i, p, card) {
+    var form = el("form", { class: "short answer", novalidate: true });
+    var input = el("input", {
+      class: "inp", id: "answer-input", type: "text", name: "answer",
+      autocomplete: "off", autocapitalize: "off", autocorrect: "off", spellcheck: "false",
+      placeholder: "Type your answer", "aria-label": "Your answer"
+    });
+    form.appendChild(el("label", { class: "lbl", for: "answer-input", text: "Your answer, from memory" }));
+    form.appendChild(input);
+    form.appendChild(el("button", { class: "btn btn-primary", type: "submit", text: "Check answer" }));
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      submit_apply(i, input.value, p, card);
+    });
+    return form;
+  }
+
+  /* order: the list starts in the order the author wrote, and the student
+     drags a row to a new place in it. Every row also carries an up and a
+     down button, which is the path for a finger that does not drag and
+     for the keyboard, so no pointer is ever required.
+
+     Movement is measured two ways: settle() animates every row that the
+     change pushed, and slotTop() reads offsetTop, which a running
+     animation cannot disturb, so the drop target stays exact. */
+  function renderOrder(step, i, p, card) {
+    var order = step.options.map(function (_, n) { return n; });
+    var start = order.slice();
+    var history = [];
+    var hintId = "order-" + (uid += 1);
+    var list = el("ol", { class: "seq", role: "list", "aria-labelledby": hintId });
+    var live = el("p", { class: "sr", "aria-live": "polite" });
+    var rows = [];
+
+    function slotTop(node) {
+      return list.getBoundingClientRect().top + list.clientTop + node.offsetTop;
+    }
+
+    function tops() {
+      var m = new Map();
+      Array.prototype.forEach.call(list.children, function (node) {
+        m.set(node, node.getBoundingClientRect().top);
+      });
+      return m;
+    }
+
+    /* Animate the rows a change dislodged, from where they were to where
+       they are now. skip is the row a finger is holding: it follows the
+       pointer instead. */
+    function settle(before, skip) {
+      Array.prototype.forEach.call(list.children, function (node) {
+        if (node === skip) return;
+        var was = before.get(node);
+        if (was === undefined) return;
+        var dy = was - node.getBoundingClientRect().top;
+        if (Math.abs(dy) < 1) return;
+        node.style.transition = "none";
+        node.style.transform = "translateY(" + dy + "px)";
+        void node.offsetHeight;
+        node.style.transition = "";
+        node.style.transform = "";
+      });
+    }
+
+    function sync() {
+      var was = pickFocus();
+      order.forEach(function (idx, n) {
+        var row = rows[idx];
+        row.querySelector(".srow-n").textContent = String(n + 1);
+        list.appendChild(row);
+      });
+      order.forEach(function (idx, n) {
+        var row = rows[idx];
+        row.querySelector(".mv-up").disabled = (n === 0);
+        row.querySelector(".mv-down").disabled = (n === order.length - 1);
+      });
+      resetBtn.disabled = sameOrder(order, start);
+      undoBtn.disabled = history.length === 0;
+      restoreFocus(was);
+    }
+
+    /* Re-appending a row to reorder the list moves the focus to the body,
+       so the focused arrow is read back first and returned to its row
+       after. Without this, a keyboard user gets one move per tab back. */
+    function pickFocus() {
+      var active = document.activeElement;
+      if (!active || !active.getAttribute || !list.contains(active)) return null;
+      var dir = active.getAttribute("data-dir");
+      var row = active.closest ? active.closest(".srow") : null;
+      if (!dir || !row) return null;
+      return { idx: Number(row.getAttribute("data-idx")), dir: dir };
+    }
+
+    function restoreFocus(was) {
+      if (!was) return;
+      var row = rows[was.idx];
+      if (!row) return;
+      var btn = row.querySelector('[data-dir="' + was.dir + '"]');
+      if (!btn || btn.disabled) btn = row.querySelector('[data-dir="' + (was.dir === "up" ? "down" : "up") + '"]');
+      if (btn && !btn.disabled) btn.focus();
+    }
+
+    function copyOrder() { return order.slice(); }
+
+    function place(from, to, skip) {
+      if (from === to || from < 0 || to < 0 || to >= order.length) return false;
+      var before = tops();
+      var moved = order.splice(from, 1)[0];
+      order.splice(to, 0, moved);
+      sync();
+      settle(before, skip);
+      return true;
+    }
+
+    function move(from, to) {
+      var was = copyOrder();
+      if (!place(from, to, null)) return;
+      history.push(was);
+      live.textContent = labelOf(order[to]) + " is now number " + (to + 1) + " of " + order.length;
+    }
+
+    function labelOf(idx) { return rows[idx].querySelector(".srow-t").textContent; }
+
+    function undo() {
+      if (!history.length) return;
+      var back = history.pop();
+      var before = tops();
+      order = back.slice();
+      sync();
+      settle(before, null);
+      live.textContent = "Back to the order you had before.";
+    }
+
+    function reset() {
+      history.push(copyOrder());
+      var before = tops();
+      order = start.slice();
+      sync();
+      settle(before, null);
+      live.textContent = "Back to the order the items came in.";
+    }
+
+    step.options.forEach(function (text, idx) {
+      var up = el("button", { class: "mv mv-up", type: "button", "data-dir": "up", "aria-label": "Move up" }, chevron(true));
+      var down = el("button", { class: "mv mv-down", type: "button", "data-dir": "down", "aria-label": "Move down" }, chevron(false));
+      var row = el("li", { class: "srow", "data-idx": String(idx) }, [
+        el("span", { class: "grip", "aria-hidden": "true" }),
+        el("span", { class: "srow-head" }, [
+          el("span", { class: "srow-n", text: String(idx + 1) }),
+          el("span", { class: "srow-t", text: text })
+        ]),
+        el("span", { class: "srow-mv" }, [up, down])
+      ]);
+      up.addEventListener("click", function () { move(order.indexOf(idx), order.indexOf(idx) - 1); });
+      down.addEventListener("click", function () { move(order.indexOf(idx), order.indexOf(idx) + 1); });
+      wireDrag(row, idx);
+      rows[idx] = row;
+      list.appendChild(row);
+    });
+
+    var drag = null;
+
+    function wireDrag(row, idx) {
+      var grip = row.querySelector(".grip");
+      grip.addEventListener("pointerdown", function (e) {
+        if (drag || e.button > 0 || card.getAttribute("data-answered")) return;
+        e.preventDefault();
+        var was = copyOrder();
+        drag = {
+          row: row, id: e.pointerId, from: order.indexOf(idx),
+          y0: e.clientY, ty: 0, want: row.getBoundingClientRect().top
+        };
+        row.classList.add("dragging");
+        row.style.transition = "none";
+        /* The listeners live on the document: reordering the list moves
+           the handle in the tree, and a capture on the handle does not
+           survive that move. */
+        document.addEventListener("pointermove", onMove);
+        document.addEventListener("pointerup", onEnd);
+        document.addEventListener("pointercancel", onEnd);
+
+        function onMove(ev) {
+          if (!drag || ev.pointerId !== drag.id) return;
+          ev.preventDefault();
+          drag.want = drag.want + (ev.clientY - drag.y0);
+          drag.y0 = ev.clientY;
+
+          var guard = 0;
+          while (guard < 6) {
+            guard += 1;
+            var prev = drag.row.previousElementSibling;
+            var next = drag.row.nextElementSibling;
+            var up = prev && ev.clientY < slotTop(prev) + prev.offsetHeight / 2 - 4;
+            var down = next && ev.clientY > slotTop(next) + next.offsetHeight / 2 + 4;
+            if (up) { place(drag.from, drag.from - 1, drag.row); drag.from -= 1; }
+            else if (down) { place(drag.from, drag.from + 1, drag.row); drag.from += 1; }
+            else break;
+          }
+
+          var rect = drag.row.getBoundingClientRect();
+          drag.ty = drag.want - (rect.top - drag.ty);
+          drag.row.style.transform = "translateY(" + drag.ty + "px)";
+        }
+
+        function onEnd(ev) {
+          if (!drag || ev.pointerId !== drag.id) return;
+          document.removeEventListener("pointermove", onMove);
+          document.removeEventListener("pointerup", onEnd);
+          document.removeEventListener("pointercancel", onEnd);
+          var landed = drag.from;
+          var held = drag.row;
+          drag = null;
+          held.classList.remove("dragging");
+          held.style.transition = "";
+          held.style.transform = "";
+          if (!sameOrder(order, was)) {
+            history.push(was);
+            sync();
+            live.textContent = labelOf(order[landed]) + " is now number " + (landed + 1) + " of " + order.length;
+          }
+        }
+      });
+    }
+
+    var undoBtn = el("button", { class: "btn btn-quiet", type: "button", text: "Undo", disabled: true });
+    var resetBtn = el("button", { class: "btn btn-quiet", type: "button", text: "Reset", disabled: true });
+    var submitBtn = el("button", { class: "btn btn-primary", type: "button", text: "Check order" });
+
+    undoBtn.addEventListener("click", undo);
+    resetBtn.addEventListener("click", reset);
+    submitBtn.addEventListener("click", function () { submit_apply(i, order.slice(), p, card); });
+
+    var wrap = el("div", { class: "answer order" }, [
+      el("p", { class: "lbl", id: hintId, text: "Drag a handle to move an item, or use the arrows." }),
+      list,
+      live,
+      el("div", { class: "btn-row btn-split" }, [undoBtn, resetBtn]),
+      el("div", { class: "btn-row" }, [submitBtn])
+    ]);
+    sync();
+    return wrap;
+  }
+
+  /* sort and match share one shape: one row per item, one button per
+     bucket (sort) or per partner (match).
+
+     sort also takes a drag: the handle under a row lifts a copy of the
+     item, the row's own bucket buttons light up as the places it can
+     land, and letting go over one is the same choice as tapping it. */
+  function renderAssign(step, i, p, card, kind) {
+    var rows = kind === "sort"
+      ? step.items.map(function (item) { return item.text; })
+      : step.lefts.slice();
+    var choices = kind === "sort" ? step.buckets : step.rights;
+    var chosen = rows.map(function () { return -1; });
+    var draggable = kind === "sort";
+    var wrap = el("div", { class: "assign" });
+
+    function choose(r, c) {
+      if (card.getAttribute("data-answered")) return;
+      chosen[r] = c;
+      buttonsPerRow[r].forEach(function (btn, k) {
+        btn.setAttribute("aria-pressed", k === c ? "true" : "false");
+      });
+      submitBtn.disabled = chosen.indexOf(-1) !== -1;
+    }
+
+    var buttonsPerRow = [];
+    rows.forEach(function (text, r) {
+      var buttons = choices.map(function (choice, c) {
+        var btn = el("button", { class: "abtn", type: "button", "aria-pressed": "false", text: choice });
+        btn.addEventListener("click", function () { choose(r, c); });
+        return btn;
+      });
+      buttonsPerRow.push(buttons);
+      var row = el("div", {
+        class: "arow", "data-kind": kind, "data-row": String(r),
+        role: "group", "aria-label": text
+      }, [
+        draggable ? el("span", { class: "grip", "aria-hidden": "true" }) : null,
+        el("p", { class: "atext", text: text }),
+        el("div", { class: "abtns" }, buttons)
+      ]);
+      if (draggable) wireCarry(row, r, text, buttons);
+      wrap.appendChild(row);
+    });
+
+    var submitBtn = el("button", { class: "btn btn-primary", type: "button", text: "Check answers", disabled: true });
+    submitBtn.addEventListener("click", function () { submit_apply(i, chosen.slice(), p, card); });
+
+    function wireCarry(row, r, text, buttons) {
+      var grip = row.querySelector(".grip");
+      var carry = null;
+
+      function place(x, y) {
+        var over = null;
+        buttons.forEach(function (btn, c) {
+          var rect = btn.getBoundingClientRect();
+          if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) over = c;
+          btn.classList.toggle("drop-on", over === c);
+        });
+        return over;
+      }
+
+      function follow(x, y) {
+        var box = carry.box;
+        var w = box.offsetWidth || 0;
+        var h = box.offsetHeight || 0;
+        var left = Math.min(Math.max(8, x - 16), Math.max(8, window.innerWidth - w - 8));
+        var top = Math.min(Math.max(8, y - 26), Math.max(8, window.innerHeight - h - 8));
+        box.style.transform = "translate(" + left + "px," + top + "px)";
+      }
+
+      grip.addEventListener("pointerdown", function (e) {
+        if (carry || e.button > 0 || card.getAttribute("data-answered")) return;
+        e.preventDefault();
+        var box = el("span", { class: "ghost", text: text });
+        document.body.appendChild(box);
+        carry = { id: e.pointerId, box: box, at: -1 };
+        follow(e.clientX, e.clientY);
+        row.classList.add("dragging");
+        document.addEventListener("pointermove", onMove);
+        document.addEventListener("pointerup", onEnd);
+        document.addEventListener("pointercancel", onEnd);
+
+        function onMove(ev) {
+          if (!carry || ev.pointerId !== carry.id) return;
+          ev.preventDefault();
+          follow(ev.clientX, ev.clientY);
+          carry.at = place(ev.clientX, ev.clientY);
+        }
+
+        function onEnd(ev) {
+          if (!carry || ev.pointerId !== carry.id) return;
+          document.removeEventListener("pointermove", onMove);
+          document.removeEventListener("pointerup", onEnd);
+          document.removeEventListener("pointercancel", onEnd);
+          var at = carry.at;
+          carry.box.remove();
+          carry = null;
+          row.classList.remove("dragging");
+          buttons.forEach(function (btn) { btn.classList.remove("drop-on"); });
+          if (at !== -1) choose(r, at);
+        }
+      });
+    }
+
+    var label = kind === "sort"
+      ? el("p", { class: "lbl", text: "Tap a bucket for each item, or drag a handle onto one." })
+      : null;
+
+    return el("div", { class: "answer" }, [
+      label,
+      wrap,
+      el("div", { class: "btn-row" }, [submitBtn])
+    ]);
+  }
+
+  /* Named submit_apply so the local `submit` button above cannot shadow it. */
+  function submit_apply(stepIndex, given, p, card) {
+    var step = STEPS[stepIndex];
+    if (card.getAttribute("data-answered")) return;
+    card.setAttribute("data-answered", "yes");
+
+    var ok = isCorrect(step, given);
+    latest.set(stepIndex, ok);
+
+    lockAndMark(step, given, card);
+
+    // Every answer control is locked once the step is answered.
+    Array.prototype.forEach.call(card.querySelectorAll(".answer button"), function (btn) {
+      btn.disabled = true;
+    });
+
+    p.fill.style.width = ((pos + 1) / p.n) * 100 + "%";
+    p.bar.setAttribute("aria-valuenow", String(pos + 1));
+
+    // A hint has done its job once the step is answered.
+    var hintBtn = card.querySelector(".hint-btn");
+    if (hintBtn) hintBtn.remove();
+    var hintBox = card.querySelector(".hint");
+    if (hintBox) hintBox.remove();
+
+    var box = feedback(step, ok, given);
+    card.appendChild(box);
+    card.appendChild(nextRow(p, "Next step"));
+    box.focus();
+  }
+
+  function advance(p) {
+    p.fill.style.width = ((pos + 1) / p.n) * 100 + "%";
+    p.bar.setAttribute("aria-valuenow", String(pos + 1));
+    next(p, "Continue");
+  }
+
+  function nextRow(p, label) {
+    var last = pos === queue.length - 1;
+    return el("div", { class: "btn-row" }, [
+      el("button", {
+        class: "btn btn-primary", type: "button",
+        text: last ? "See results" : label,
+        onclick: function () { next(p, label); }
+      })
+    ]);
+  }
+
+  function next(p) {
+    if (pos === queue.length - 1) { screen = "results"; render(); }
+    else { pos += 1; render(); }
+  }
+
+  function lockAndMark(step, given, card) {
+    var k = step.kind;
+
+    if (k === "choice") {
+      Array.prototype.forEach.call(card.querySelectorAll(".opt"), function (btn, idx) {
+        btn.disabled = true;
+        if (idx === step.answer) { btn.setAttribute("data-state", "right"); mark(btn, "Right answer"); }
+        else if (idx === given) { btn.setAttribute("data-state", "wrong"); mark(btn, "Your answer"); }
+        else { btn.setAttribute("data-state", "muted"); }
+      });
+      return;
+    }
+
+    if (k === "multi") {
+      var chosen = isArr(given) ? given : [];
+      Array.prototype.forEach.call(card.querySelectorAll(".opt"), function (btn, idx) {
+        btn.disabled = true;
+        var right = step.answer.indexOf(idx) !== -1;
+        var picked = chosen.indexOf(idx) !== -1;
+        if (right) { btn.setAttribute("data-state", "right"); mark(btn, picked ? "Right answer" : "Right answer, not picked"); }
+        else if (picked) { btn.setAttribute("data-state", "wrong"); mark(btn, "Your answer"); }
+        else { btn.setAttribute("data-state", "muted"); }
+      });
+      return;
+    }
+
+    if (k === "short") {
+      var form = card.querySelector(".short");
+      if (form) {
+        var input = form.querySelector("input");
+        if (input) input.readOnly = true;
+        var submitBtn = form.querySelector("button");
+        if (submitBtn) submitBtn.remove();
+      }
+      return;
+    }
+
+    if (k === "order") {
+      var wrap = card.querySelector(".order");
+      if (!wrap) return;
+      Array.prototype.forEach.call(wrap.querySelectorAll(".srow"), function (row, n) {
+        var ok = given[n] === step.answer[n];
+        row.setAttribute("data-state", ok ? "right" : "wrong");
+        mark(row, ok ? "Right" : "Not right");
+      });
+      return;
+    }
+
+    if (k === "sort" || k === "match") {
+      Array.prototype.forEach.call(card.querySelectorAll(".arow"), function (row, r) {
+        var correct = k === "sort" ? step.items[r].bucket : step.answer[r];
+        var chose = given[r];
+        Array.prototype.forEach.call(row.querySelectorAll(".abtn"), function (btn, c) {
+          btn.disabled = true;
+          if (c === correct) btn.setAttribute("data-state", "right");
+          else if (c === chose) btn.setAttribute("data-state", "wrong");
+          else { btn.setAttribute("data-state", "muted"); }
+        });
+        row.setAttribute("data-state", chose === correct ? "right" : "wrong");
+        mark(row, chose === correct ? "Right" : "Not right");
+      });
+    }
+  }
+
+  /* The verdict is one line. Below it, the model answer and the note on
+     the tempting wrong belief are labelled pairs, so nothing is glued
+     together with a separator. */
+  function feedback(step, ok, given) {
+    var box = el("div", { class: "fb " + (ok ? "fb-ok" : "fb-no"), role: "status", tabindex: "-1" });
+    box.appendChild(el("p", { class: "fb-verdict", text: ok ? "Correct" : "Not yet" }));
+    if (!ok) {
+      box.appendChild(pair("Right answer", el("span", { class: "fb-val" }, el("code", { text: modelAnswer(step) }))));
+    }
+    if (step.feedback) box.appendChild(el("p", { class: "fb-why", text: step.feedback }));
+    var mis = ok ? "" : misconceptionFor(step, misconceptionKey(step, given));
+    if (mis) {
+      box.appendChild(el("p", { class: "fb-mis" }, [
+        el("span", { class: "pair-l", text: "Watch out" }),
+        el("span", { class: "pair-v", text: mis })
+      ]));
+    }
+    return box;
+  }
+
+  // ---- results --------------------------------------------------------
+
+  function renderResults() {
+    clear();
+    var c = criterion();
+    var graded = queue.filter(function (i) { return STEPS[i].kind !== "explore"; });
+    var right = graded.filter(function (i) { return latest.get(i) === true; }).length;
+    var missed = graded.filter(function (i) { return latest.get(i) !== true; });
+    var overall = 0;
+    STEPS.forEach(function (s, i) {
+      if (s.kind !== "explore" && latest.get(i) === true) overall += 1;
+    });
+    var firstPass = round === 1;
+    var met = overall >= c.minCorrect;
+
+    var card = el("section", { class: "card" });
+    card.appendChild(el("p", { class: "score" }, [
+      el("span", { class: "score-n", text: String(right) }),
+      el("span", { class: "score-d", text: "of " + graded.length })
+    ]));
+    card.appendChild(el("p", {
+      class: "lead",
+      text: firstPass
+        ? (graded.length && right === graded.length
+            ? "Every graded step right on the first pass."
+            : "Some graded steps were not right on the first pass. Read the notes below, then run them again.")
+        : "Right this round. Across the whole exercise: " + overall + " of " + GRADED_TOTAL + " graded steps."
+    }));
+
+    if (c.text) {
+      card.appendChild(el("div", { class: "verdict " + (met ? "verdict-met" : "verdict-not") }, [
+        el("span", { class: "verdict-l", text: met ? "Your bar is met" : "Your bar is not met yet" }),
+        el("span", { class: "verdict-v", text: c.text })
+      ]));
+    }
+
+    if (missed.length) {
+      var list = el("ul", { class: "res-list" });
+      missed.forEach(function (i) {
+        var step = STEPS[i];
+        list.appendChild(el("li", {}, [
+          el("p", { class: "q", text: step.prompt }),
+          pair("Answer", document.createTextNode(modelAnswer(step))),
+          step.feedback ? pair("Why", document.createTextNode(step.feedback)) : null
+        ]));
+      });
+      card.appendChild(el("h2", { class: "sub", text: "Still to learn" }));
+      card.appendChild(list);
+    }
+
+    var buttons = [];
+    if (missed.length) {
+      buttons.push(el("button", {
+        class: "btn btn-primary", type: "button",
+        text: "Redo the " + missed.length + " you missed",
+        onclick: function () { startMissedRound(missed); }
+      }));
+    }
+    buttons.push(el("button", {
+      class: missed.length ? "btn btn-quiet" : "btn btn-primary",
+      type: "button",
+      text: "Start over",
+      onclick: function () { latest.clear(); startRound(); }
+    }));
+    card.appendChild(el("div", { class: "btn-row" }, buttons));
+
+    card.appendChild(el("p", {
+      class: "spacing",
+      text: missed.length
+        ? "Do these " + missed.length + " again tomorrow, not in ten minutes. The gap is what makes them stick."
+        : "Come back in a day or two and run this again. Spacing the same steps over days is what makes them stay."
+    }));
+
+    app.appendChild(card);
+    var resultRes = resourceList();
+    if (resultRes) app.appendChild(resultRes);
+    var first = card.querySelector("button");
+    if (first) first.focus();
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>

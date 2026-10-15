@@ -19,6 +19,26 @@
         "who may start it"
       ],
       "date": "2026-10-15"
+    },
+    {
+      "slug": "442-write-your-own-skill",
+      "title": "Write your own agent skill",
+      "goal": "After this you can write a SKILL.md your agent finds on its own, and link two skills into one workflow.",
+      "minutes": 10,
+      "steps": 10,
+      "graded": 7,
+      "tags": [
+        "how a skill fires",
+        "the trigger",
+        "measuring the odds",
+        "leading words",
+        "the parts",
+        "keeping the agent out",
+        "building one",
+        "what makes a skill fire",
+        "linking skills"
+      ],
+      "date": "2026-10-15"
     }
   ]
 }
