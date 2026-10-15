@@ -1,0 +1,24 @@
+{
+  "site": {
+    "title": "Practice exercises",
+    "kicker": "INFO 442 · Autumn 2026",
+    "lede": "Short practice for the ideas we cover in lab. Each one takes about ten minutes and fits on a phone. Pick one, finish it, then come back to the ones you missed tomorrow."
+  },
+  "exercises": [
+    {
+      "slug": "agents-md-or-skill",
+      "title": "AGENTS.md or a skill?",
+      "goal": "After this you can decide whether a piece of guidance belongs in AGENTS.md or in a skill, and say why in one sentence.",
+      "minutes": 8,
+      "steps": 8,
+      "graded": 7,
+      "tags": [
+        "what is loaded",
+        "which one it belongs in",
+        "what it costs",
+        "who may start it"
+      ],
+      "date": "2026-10-15"
+    }
+  ]
+}

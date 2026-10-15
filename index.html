@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice exercises</title>
+<style>
+  :root {
+    --uw-purple: #4B2E83;
+    --uw-gold-deep: #85754D;
+    --bg: #F7F7FB;
+    --surface: #FFFFFF;
+    --surface-2: #EDEDF4;
+    --ink: #16151D;
+    --ink-2: #3C3B4A;
+    --muted: #6B6A7B;
+    --border: #DADAE4;
+    --border-strong: #C6C6D4;
+    --accent: #6C4AB6;
+    --accent-soft: #EDE7FB;
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.375rem;
+    --text-2xl: 1.75rem;
+    --leading: 1.55;
+    --leading-tight: 1.2;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow-1: 0 1px 2px rgba(22, 21, 29, 0.06), 0 1px 3px rgba(22, 21, 29, 0.08);
+    --shadow-2: 0 6px 16px rgba(22, 21, 29, 0.10);
+    --motion: 160ms;
+    --ease: cubic-bezier(0.2, 0, 0, 1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0F0E15;
+      --surface: #1A1822;
+      --surface-2: #242230;
+      --ink: #F2F1F7;
+      --ink-2: #C9C7D6;
+      --muted: #9A98AC;
+      --border: #302E3C;
+      --border-strong: #43414F;
+      --accent: #9B7BE0;
+      --accent-soft: #2A2340;
+      --uw-purple: #8A6FC7;
+      --uw-gold-deep: #D2C49B;
+    }
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--leading);
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: 44rem; margin: 0 auto; padding: var(--space-6) var(--space-4) var(--space-8); }
+  .kicker {
+    margin: 0;
+    color: var(--uw-gold-deep);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  h1 { margin: var(--space-1, 0.25rem) 0 0; font-size: var(--text-2xl); line-height: var(--leading-tight); }
+  .rule {
+    width: 3.5rem;
+    height: 4px;
+    margin: var(--space-3) 0 var(--space-4);
+    background: var(--accent);
+    border-radius: 999px;
+  }
+  .lede { margin: 0 0 var(--space-6); color: var(--ink-2); }
+  .list { list-style: none; display: grid; gap: var(--space-3); margin: 0; padding: 0; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-1);
+  }
+  .card-a {
+    display: block;
+    padding: var(--space-4);
+    color: inherit;
+    text-decoration: none;
+    border-radius: var(--radius);
+  }
+  .card-a:hover, .card-a:focus-visible { background: var(--surface-2); }
+  .card-a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .card-t { margin: 0; font-size: var(--text-lg); line-height: var(--leading-tight); }
+  .card-g { margin: var(--space-2) 0 0; color: var(--ink-2); }
+  .card-m { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-3) 0 0; }
+  .card-m span {
+    padding: 0.15rem 0.5rem;
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+  .card-tags { margin: var(--space-2) 0 0; color: var(--muted); font-size: var(--text-sm); }
+  .card-tags span + span::before { content: " · "; }
+  .card-p { margin: var(--space-3) 0 0; color: var(--muted); font-family: var(--font-mono); font-size: var(--text-sm); }
+  .empty { padding: var(--space-6); color: var(--muted); text-align: center; }
+  footer { margin-top: var(--space-8); color: var(--muted); font-size: var(--text-sm); }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <p class="kicker">INFO 442 · Autumn 2026</p>
+    <h1>Practice exercises</h1>
+    <div class="rule" aria-hidden="true"></div>
+    <p class="lede">Short practice for the ideas we cover in lab. Each one takes about ten minutes and fits on a phone. Pick one, finish it, then come back to the ones you missed tomorrow.</p>
+  </header>
+  <ul class="list">
+      <li class="card">
+        <a class="card-a" href="exercises/agents-md-or-skill/">
+          <h2 class="card-t">AGENTS.md or a skill?</h2>
+          <p class="card-g">After this you can decide whether a piece of guidance belongs in AGENTS.md or in a skill, and say why in one sentence.</p>
+          <p class="card-m"><span>8 min</span><span>8 steps</span><span>7 graded</span></p>
+          <p class="card-tags"><span>what is loaded</span><span>which one it belongs in</span><span>what it costs</span><span>who may start it</span></p>
+          <p class="card-p">/exercises/agents-md-or-skill/</p>
+        </a>
+      </li>
+  </ul>
+  <footer>
+    <p>Every exercise is one self contained page that works offline once it is open. Direct links keep working: open any card and bookmark what is in the address bar.</p>
+  </footer>
+</main>
+</body>
+</html>
