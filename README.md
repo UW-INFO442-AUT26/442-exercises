@@ -10,13 +10,6 @@ is also reachable directly, which is what to hand out in lab:
 https://uw-info442-aut26.github.io/442-exercises/exercises/<slug>/
 ```
 
-## Why one repository
-
-An exercise used to be its own repository, which meant one repo per exercise,
-one Pages setting each, and a growing list of near-empty repos in the org. Here
-they are folders under one site, so there is one Pages setting and one list to
-read.
-
 ## Layout
 
 ```
