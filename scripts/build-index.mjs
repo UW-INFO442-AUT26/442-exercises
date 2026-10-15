@@ -42,7 +42,7 @@ const exercises = data.exercises.map((ex, i) => {
   for (const key of ["slug", "title", "goal"]) {
     if (typeof ex[key] !== "string" || !ex[key].trim()) problems.push(where + "." + key + " is required");
   }
-  for (const key of ["minutes", "steps", "graded"]) {
+  for (const key of ["minutes", "questions", "activities"]) {
     if (!Number.isInteger(ex[key]) || ex[key] < 0) problems.push(where + "." + key + " must be a whole number");
   }
   if (ex.tags !== undefined && !Array.isArray(ex.tags)) problems.push(where + ".tags must be an array");
@@ -63,9 +63,9 @@ const card = (ex) => {
   const tags = (ex.tags || []).map((t) => "<span>" + esc(t) + "</span>").join("");
   const meta = [
     ex.minutes + " min",
-    ex.steps + " steps",
-    ex.graded + " graded"
-  ].map((m) => "<span>" + esc(m) + "</span>").join("");
+    ex.questions > 0 ? ex.questions + (ex.questions === 1 ? " question" : " questions") : "",
+    ex.activities > 0 ? ex.activities + (ex.activities === 1 ? " activity" : " activities") : ""
+  ].filter((m) => m).map((m) => "<span>" + esc(m) + "</span>").join("");
   return `      <li class="card">
         <a class="card-a" href="exercises/${esc(ex.slug)}/">
           <h2 class="card-t">${esc(ex.title)}</h2>

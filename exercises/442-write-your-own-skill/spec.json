@@ -5,7 +5,7 @@
     "goal": "After this you can write a SKILL.md your agent finds on its own, and link two skills into one workflow.",
     "minutes": 10,
     "criterion": {
-      "text": "Get 6 of the 7 graded steps right, including what makes a skill fire.",
+      "text": "Get 6 of the 7 questions right, including what makes a skill fire.",
       "minCorrect": 6
     },
     "resources": [
@@ -184,7 +184,8 @@
           }
         ],
         "js": "function (values, root) {\n  var on = !!values.only;\n  var svg = root.querySelector(\"svg.state\");\n  if (!svg) return;\n  svg.setAttribute(\"data-on\", on ? \"1\" : \"0\");\n  svg.querySelector(\"[data-flag]\").textContent = on ? \"true\" : \"false\";\n  svg.querySelector(\"[data-badge]\").textContent = on ? \"Waiting for you\" : \"Runs on its own\";\n  var note = root.querySelector(\"[data-note]\");\n  if (note) note.textContent = on\n    ? \"The agent leaves this skill alone. It runs only when you type its name, so nothing starts by surprise.\"\n    : \"The agent may start this skill on its own whenever your request sounds related.\";\n}"
-      }
+      },
+      "caption": "This is what disable-model-invocation does: the skill waits for you, and while it waits it is not in the agent's list, so it costs nothing."
     },
     {
       "id": "s7",
@@ -201,7 +202,7 @@
         "disable_model_invocation",
         "disable model invocation"
       ],
-      "feedback": "Set disable-model-invocation: true in the frontmatter. The agent then leaves the skill alone until you type its name. Use it for anything risky, like sending mail or deleting files.",
+      "feedback": "Set disable-model-invocation: true in the frontmatter. The agent then leaves the skill alone until you type its name. Use it for anything hard to undo, like sending mail or deleting files, and for a run you start on purpose, like a release checklist. A skill with the key set is not in the agent's list at all, so it costs nothing while you work on something else.",
       "misconception": "Many people try deleting the description instead. The key that does the job is disable-model-invocation."
     },
     {

@@ -5,7 +5,7 @@
     "goal": "After this you can decide whether a piece of guidance belongs in AGENTS.md or in a skill, and say why in one sentence.",
     "minutes": 8,
     "criterion": {
-      "text": "Get 6 of the 7 graded steps right, including which file rides along on every turn.",
+      "text": "Get 6 of the 7 questions right, including which side a procedure belongs on.",
       "minCorrect": 6
     },
     "resources": [
@@ -26,42 +26,48 @@
       "id": "predict-load",
       "tag": "what is loaded",
       "kind": "choice",
-      "hint": "Two things arrive for every request: the project's own instruction files, and one line for each skill you have installed.",
-      "prompt": "Turn 1 asks something your skill has nothing to do with. What is still sitting in the model's context?",
+      "hint": "Before it reads any file, the agent decides the file is worth reading. Ask yourself what it decides from.",
+      "prompt": "Your agent has a folder of skills installed. You are asking about something else, and none of it is the skill's job. How much of that skill is the agent holding?",
       "options": [
-        "The whole of AGENTS.md, and the skill's name and description",
-        "The whole of AGENTS.md, and nothing at all from the skill",
-        "The whole of AGENTS.md, the skill's description, and the skill's body"
+        "Nothing from it at all",
+        "Its name and one line saying what it is for",
+        "The whole skill file, every turn"
       ],
-      "answer": 0,
-      "feedback": "AGENTS.md is carried in full on every turn, because it is part of the instructions the session opens with. A skill is carried as one line, its name and description, and that line is what the model matches your request against. The body stays on disk until the line matches.",
+      "answer": 1,
+      "feedback": "An installed skill rides along as one line: its name and the line that says what it is for. That line is what the agent matches your request against, and it is the only reason a skill can fire without you naming it. The rest of the file waits on disk until the line matches. AGENTS.md goes the other way: the whole file arrives on every turn, which is why it has to stay short.",
       "misconception": {
-        "1": "It feels like a skill you have not used yet is invisible. One line of each installed skill is in the list the model reads at the start, and that line is the whole reason a skill can fire on its own.",
-        "2": "The description is loaded. The body is not. The model reads the body only after it decides the skill is relevant, which is the point of splitting the two.",
-        "default": "One line per skill is always loaded. The body waits."
+        "0": "A skill you have not asked for feels invisible. One line for each installed skill is in the list the agent reads at the start, and that line is what lets the skill fire on its own.",
+        "2": "Only the one line is loaded. The file itself waits, and it is read only after the agent decides the skill is relevant. That split is what makes a long skill cheap while you work on something else.",
+        "default": "One line per skill is in the list. The file itself waits."
       }
     },
     {
-      "id": "see-load",
+      "id": "see-session",
       "tag": "what is loaded",
       "kind": "explore",
-      "hint": "Watch the top shelf and the bottom shelf as the turns go by.",
-      "prompt": "Six turns in a row, and only turn 4 is a request the skill is for. Drag the slider and watch what each shelf carries.",
+      "hint": "Watch the cost line at the bottom of the panel as the messages go by.",
+      "prompt": "Six messages go by, and only one of them is the skill's job. Send them and watch what the agent holds.",
       "widget": {
-        "html": "<svg class=\"v56\" viewBox=\"0 0 300 156\" width=\"100%\" height=\"auto\" role=\"img\">\n  <title>Two shelves over six turns. The whole AGENTS.md file sits on the top shelf every turn. The skill carries one line every turn, and its body only on the turn it is needed.</title>\n  <style>\n    .v56 { display: block; }\n    .v56 text { font-family: var(--font-sans); }\n    .v56 .v56-read { fill: var(--ink); font-size: 12px; font-weight: 600; }\n    .v56 .v56-tally { fill: var(--muted); font-size: 11px; }\n    .v56 .v56-lane { fill: var(--ink-2); font-size: 11px; font-weight: 600; }\n    .v56 .v56-num { fill: var(--muted); font-size: 11px; }\n    .v56 .v56-hot { fill: var(--ink); font-weight: 700; }\n    .v56 .v56-match { fill: var(--accent); font-weight: 700; }\n    .v56 .v56-shelf { fill: var(--surface-2); }\n    .v56 .v56-a { fill: var(--accent); }\n    .v56 .v56-b { fill: var(--muted); }\n    .v56 .v56-b.v56-body { fill: var(--accent); }\n    .v56 .v56-bar { transition: transform var(--motion-move) var(--ease), fill var(--motion-move) var(--ease); }\n  </style>\n  <text class=\"v56-read\" x=\"6\" y=\"14\">Turn 1</text>\n  <text class=\"v56-tally\" x=\"6\" y=\"29\">AGENTS.md: 1 file. The skill: 1 line, no body yet.</text>\n  <text class=\"v56-lane\" x=\"6\" y=\"59\">AGENTS.md</text>\n  <rect class=\"v56-shelf\" x=\"86\" y=\"40\" width=\"204\" height=\"30\" rx=\"6\"/>\n  <rect class=\"v56-bar v56-a\" x=\"88\" y=\"42\" width=\"24\" height=\"26\" rx=\"4\"/>\n  <rect class=\"v56-bar v56-a\" x=\"122\" y=\"42\" width=\"24\" height=\"26\" rx=\"4\"/>\n  <rect class=\"v56-bar v56-a\" x=\"156\" y=\"42\" width=\"24\" height=\"26\" rx=\"4\"/>\n  <rect class=\"v56-bar v56-a\" x=\"190\" y=\"42\" width=\"24\" height=\"26\" rx=\"4\"/>\n  <rect class=\"v56-bar v56-a\" x=\"224\" y=\"42\" width=\"24\" height=\"26\" rx=\"4\"/>\n  <rect class=\"v56-bar v56-a\" x=\"258\" y=\"42\" width=\"24\" height=\"26\" rx=\"4\"/>\n  <text class=\"v56-lane\" x=\"6\" y=\"117\">the skill</text>\n  <rect class=\"v56-shelf\" x=\"86\" y=\"98\" width=\"204\" height=\"30\" rx=\"6\"/>\n  <rect class=\"v56-bar v56-b\" x=\"88\" y=\"100\" width=\"24\" height=\"26\" rx=\"4\"/>\n  <rect class=\"v56-bar v56-b\" x=\"122\" y=\"100\" width=\"24\" height=\"26\" rx=\"4\"/>\n  <rect class=\"v56-bar v56-b\" x=\"156\" y=\"100\" width=\"24\" height=\"26\" rx=\"4\"/>\n  <rect class=\"v56-bar v56-b\" x=\"190\" y=\"100\" width=\"24\" height=\"26\" rx=\"4\"/>\n  <rect class=\"v56-bar v56-b\" x=\"224\" y=\"100\" width=\"24\" height=\"26\" rx=\"4\"/>\n  <rect class=\"v56-bar v56-b\" x=\"258\" y=\"100\" width=\"24\" height=\"26\" rx=\"4\"/>\n  <text class=\"v56-num\" x=\"100\" y=\"146\" text-anchor=\"middle\">1</text>\n  <text class=\"v56-num\" x=\"134\" y=\"146\" text-anchor=\"middle\">2</text>\n  <text class=\"v56-num\" x=\"168\" y=\"146\" text-anchor=\"middle\">3</text>\n  <text class=\"v56-num v56-match\" x=\"202\" y=\"146\" text-anchor=\"middle\">4</text>\n  <text class=\"v56-num\" x=\"236\" y=\"146\" text-anchor=\"middle\">5</text>\n  <text class=\"v56-num\" x=\"270\" y=\"146\" text-anchor=\"middle\">6</text>\n</svg>",
+        "html": "<div class=\"v71\">\n  <div class=\"v71-term\">\n    <p class=\"v71-bar\"><span class=\"v71-dot\" aria-hidden=\"true\"></span><span class=\"v71-name\">agent session</span><span class=\"v71-turn\" data-turn>0 messages</span></p>\n    <div class=\"v71-log\" data-log></div>\n    <p class=\"v71-cost\" data-cost>Nothing sent yet.</p>\n  </div>\n  <div class=\"v71-load\">\n    <p class=\"v71-lane\">What the agent is holding</p>\n    <ul class=\"v71-rows\">\n      <li class=\"v71-row\"><span class=\"v71-k\">AGENTS.md</span><span class=\"v71-v\">the whole file</span><span class=\"v71-pill v71-on\">every turn</span></li>\n      <li class=\"v71-row\"><span class=\"v71-k\">442-create-exercise</span><span class=\"v71-v\">one line, its name and what it is for</span><span class=\"v71-pill v71-on\">every turn</span></li>\n      <li class=\"v71-row\" data-body><span class=\"v71-k\">its file, 300 lines</span><span class=\"v71-v\" data-body-v>waiting on disk</span><span class=\"v71-pill\" data-body-p>not loaded</span></li>\n    </ul>\n  </div>\n</div>\n<style>\n  .v71 { display: grid; gap: var(--space-3); }\n  .v71-term { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }\n  .v71-bar { display: flex; align-items: center; gap: var(--space-2); margin: 0; padding: var(--space-2) var(--space-3); background: var(--surface-2); border-bottom: 1px solid var(--border); }\n  .v71-dot { flex: none; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--accent); }\n  .v71-name, .v71-turn { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--muted); }\n  .v71-turn { margin-left: auto; }\n  .v71-log { display: grid; gap: var(--space-3); padding: var(--space-3); min-height: 7rem; max-height: 15rem; overflow-y: auto; align-content: start; }\n  .v71-more { margin: 0; color: var(--muted); font-size: var(--text-xs); }\n  .v71-b { display: grid; gap: var(--space-1); }\n  .v71-you { justify-self: end; max-width: 90%; margin: 0; padding: var(--space-2) var(--space-3); background: var(--accent-soft); color: var(--ink); border-radius: var(--radius-sm) var(--radius-sm) 0 var(--radius-sm); font-size: var(--text-sm); animation: v71-in var(--motion-move) var(--ease); }\n  .v71-ai { max-width: 95%; margin: 0; padding: var(--space-2) var(--space-3); background: var(--surface-2); color: var(--ink-2); border-radius: 0 var(--radius-sm) var(--radius-sm) var(--radius-sm); font-size: var(--text-sm); animation: v71-in var(--motion-move) var(--ease); }\n  .v71-fire { margin: 0; font-family: var(--font-mono); font-size: var(--text-xs); color: var(--accent); }\n  .v71-cost { margin: 0; padding: var(--space-2) var(--space-3); border-top: 1px solid var(--border); color: var(--muted); font-family: var(--font-mono); font-size: var(--text-xs); }\n  .v71-lane { margin: 0 0 var(--space-2); color: var(--ink-2); font-size: var(--text-xs); font-weight: 600; }\n  .v71-rows { display: grid; gap: var(--space-1); margin: 0; padding: 0; list-style: none; }\n  .v71-row { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; padding: var(--space-2) var(--space-3); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: var(--text-xs); }\n  .v71-k { font-family: var(--font-mono); color: var(--ink); }\n  .v71-v { color: var(--muted); }\n  .v71-pill { margin-left: auto; padding: 0 var(--space-2); border-radius: var(--radius-sm); background: var(--surface-2); color: var(--muted); }\n  .v71-on { background: var(--accent-soft); color: var(--ink); }\n  .v71-hot { background: var(--accent); color: var(--accent-ink); }\n  @keyframes v71-in { from { opacity: 0; transform: translateY(0.35rem); } to { opacity: 1; transform: none; } }\n  @media (prefers-reduced-motion: reduce) { .v71-you, .v71-ai { animation: none; } }\n</style>",
         "controls": [
           {
-            "type": "range",
-            "name": "turn",
-            "label": "Turn",
-            "min": 1,
-            "max": 6,
-            "step": 1,
-            "value": 1
+            "type": "button",
+            "name": "send",
+            "label": "Send a message"
+          },
+          {
+            "type": "button",
+            "name": "play",
+            "label": "Play all six"
+          },
+          {
+            "type": "button",
+            "name": "reset",
+            "label": "Reset"
           }
         ],
-        "js": "function (values, root, changed) {\n  var TOTAL = 6;\n  var MATCH = 4;\n  var svg = root.querySelector(\".v56\");\n  if (!svg) return;\n  var turn = Math.max(1, Math.min(Math.round(Number(values.turn) || 1), TOTAL));\n  var a = svg.querySelectorAll(\".v56-a\");\n  var b = svg.querySelectorAll(\".v56-b\");\n  var nums = svg.querySelectorAll(\".v56-num\");\n  var read = svg.querySelector(\".v56-read\");\n  var tally = svg.querySelector(\".v56-tally\");\n  var i;\n  for (i = 0; i < TOTAL; i += 1) {\n    var on = i < turn;\n    var ab = a[i];\n    var bb = b[i];\n    ab.style.transformOrigin = (Number(ab.getAttribute(\"x\")) + Number(ab.getAttribute(\"width\")) / 2) + \"px 68px\";\n    ab.style.transform = \"scaleY(\" + (on ? 1 : 0) + \")\";\n    var isBody = (i + 1) === MATCH;\n    if (isBody) bb.classList.toggle(\"v56-body\", on);\n    bb.style.transformOrigin = (Number(bb.getAttribute(\"x\")) + Number(bb.getAttribute(\"width\")) / 2) + \"px 126px\";\n    bb.style.transform = \"scaleY(\" + (on ? (isBody ? 1 : 0.1) : 0) + \")\";\n  }\n  for (i = 0; i < nums.length; i += 1) {\n    nums[i].classList.toggle(\"v56-hot\", i === turn - 1);\n  }\n  if (read) {\n    read.textContent = turn === MATCH\n      ? \"Turn 4: this request is the skill's job.\"\n      : \"Turn \" + turn + \": nothing here is the skill's job.\";\n  }\n  if (tally) {\n    tally.textContent = \"AGENTS.md: \" + turn + (turn === 1 ? \" file\" : \" files\") + \". The skill: \"\n      + turn + (turn === 1 ? \" line\" : \" lines\") + (turn >= MATCH ? \" + 1 body.\" : \", no body yet.\");\n  }\n}",
-        "caption": "Every turn pays for the whole of AGENTS.md. The skill's body is paid for once, on the turn it is needed."
+        "js": "(function () {\n  var TURNS = [\n    { you: \"where is this week's reading?\", ai: \"On Canvas, under Modules.\" },\n    { you: \"TypeError: cannot read properties of undefined\", ai: \"Read the line before the crash, then the state it reads from.\" },\n    { you: \"add a footer with the class name\", ai: \"Edited src/App.jsx and ran the checks.\" },\n    { you: \"can you make me a practice exercise on React state?\", ai: \"Started a skill, and it built the page.\", fire: \"442-create-exercise\" },\n    { you: \"is the old route still needed?\", ai: \"No, nothing links to it.\" },\n    { you: \"thanks, that worked\", ai: \"Any time.\" }\n  ];\n  var at = 0;\n  var timer = null;\n\n  function stop() {\n    if (timer) { clearInterval(timer); timer = null; }\n  }\n\n  function make(i) {\n    var t = TURNS[i];\n    var box = document.createElement(\"div\");\n    box.className = \"v71-b\";\n    var you = document.createElement(\"p\");\n    you.className = \"v71-you\";\n    you.textContent = t.you;\n    var ai = document.createElement(\"p\");\n    ai.className = \"v71-ai\";\n    ai.textContent = t.ai;\n    box.appendChild(you);\n    box.appendChild(ai);\n    if (t.fire) {\n      var fire = document.createElement(\"p\");\n      fire.className = \"v71-fire\";\n      fire.textContent = \"skill \" + t.fire + \" loaded\";\n      box.appendChild(fire);\n    }\n    return box;\n  }\n\n  function paint(root) {\n    var log = root.querySelector(\"[data-log]\");\n    var cost = root.querySelector(\"[data-cost]\");\n    var count = root.querySelector(\"[data-turn]\");\n    var bodyV = root.querySelector(\"[data-body-v]\");\n    var bodyP = root.querySelector(\"[data-body-p]\");\n    if (!log) return;\n\n    var more = log.querySelector(\".v71-more\");\n    if (!at) {\n      log.textContent = \"\";\n      var wait = document.createElement(\"p\");\n      wait.className = \"v71-more\";\n      wait.textContent = \"Nothing sent yet. Send the first message.\";\n      log.appendChild(wait);\n    } else {\n      if (more) log.removeChild(more);\n      while (log.children.length > at) log.removeChild(log.lastChild);\n      while (log.children.length < at) log.appendChild(make(log.children.length));\n      log.scrollTop = log.scrollHeight;\n    }\n\n    var fired = at > 3;\n    if (bodyV) bodyV.textContent = fired ? \"in the window from message 4\" : \"waiting on disk\";\n    if (bodyP) {\n      bodyP.textContent = fired ? \"loaded once\" : \"not loaded\";\n      bodyP.className = \"v71-pill\" + (fired ? \" v71-hot\" : \"\");\n    }\n    if (count) count.textContent = at + (at === 1 ? \" message\" : \" messages\");\n    if (cost) {\n      cost.textContent = at === 0\n        ? \"Nothing sent yet.\"\n        : fired\n          ? at + \" messages: \" + at + \" lines of the skill, and its file once, on message 4.\"\n          : at + \" messages: \" + at + \" lines of the skill, and none of its file.\";\n    }\n  }\n\n  return function (values, root, changed) {\n    if (changed === \"reset\") { stop(); at = 0; }\n    if (changed === \"send\") { stop(); if (at < TURNS.length) at += 1; }\n    if (changed === \"play\") {\n      stop();\n      if (at >= TURNS.length) at = 0;\n      timer = setInterval(function () {\n        if (at >= TURNS.length) { stop(); return; }\n        at += 1;\n        paint(root);\n      }, 900);\n      root.__timer = timer;\n    }\n    paint(root);\n  };\n})()",
+        "caption": "Every turn pays for the whole of AGENTS.md. The skill pays for its one line on every turn, and for its file only on the turn it fires."
       }
     },
     {
@@ -96,7 +102,7 @@
         },
         {
           "text": "Write plainly, in short sentences, with no em dashes.",
-          "bucket": 0
+          "bucket": 1
         },
         {
           "text": "The eight steps for publishing a page to GitHub Pages.",
@@ -104,10 +110,10 @@
         },
         {
           "text": "Who to email when the build breaks.",
-          "bucket": 0
+          "bucket": 1
         }
       ],
-      "feedback": "AGENTS.md holds the short things that have to be true on every turn: invariants, house voice, and one line facts like the test command or who to email. A skill holds the long things that only matter on some turns: a procedure, a checklist, a pile of reference. The test is not importance. It is whether the line has to hold on a turn about something else entirely.",
+      "feedback": "A rule that has to hold on every turn goes in AGENTS.md, because a skill only arrives when the agent decides it is relevant. Guidance tied to a moment goes in a skill: the design tokens you read while doing design, the steps for publishing, who to email when a build breaks. Voice works the same way: the rules live in a skill that fires when you write prose, and at most one line of AGENTS.md says when to call it. The test is not how important a line feels. It is whether it has to be true on a turn about something else.",
       "misconception": "The tempting mistake is to file by importance, so a rule you care about becomes a skill. Importance is the wrong test. Ask instead whether the line has to hold on every turn, even a turn about something unrelated."
     },
     {
@@ -115,42 +121,44 @@
       "tag": "what it costs",
       "kind": "choice",
       "hint": "Think about what every turn pays for.",
-      "prompt": "Your AGENTS.md has reached 900 lines and the model has started missing rules that sit in the middle. What is the fix?",
+      "prompt": "Your AGENTS.md has reached 900 lines, and the agent has started missing rules that sit in the middle. What is the fix?",
       "options": [
-        "Move the long procedures and reference into skills, and keep the invariants in AGENTS.md",
         "Repeat the rules you care about at the top and again at the bottom",
-        "Delete the rules the model has been ignoring, because it must not need them"
+        "Delete the rules the agent has been ignoring, since it must not need them",
+        "Move the procedures and the reference into skills, and keep the standing rules in AGENTS.md"
       ],
-      "answer": 0,
-      "feedback": "Every turn pays for the whole file, and a longer file pushes each rule further from the front of the model's attention. Repeating a rule costs that much more on every turn and makes the file longer again. Deleting the ignored ones guesses at the wrong cause: a rule is usually missed because of where it sits, not because it is wrong. Move what only matters sometimes into a skill, where the cost waits until it is needed.",
+      "answer": 2,
+      "feedback": "A long instruction file does not make the agent try harder. Every line competes for attention with the line beside it, and attention is strongest at the start and the end, so the middle of a long file is where rules get lost. Move what is a procedure or a pile of reference into a skill, where it arrives only when it fires, and keep AGENTS.md for the rules that must hold every turn.",
       "misconception": {
-        "1": "Repetition feels like emphasis, and on a page it is. In a prompt it is more tokens carried on every turn, and it pushes the next rule further away.",
-        "2": "Being ignored is not evidence that a rule is unwanted. A rule missed in the middle of a long file is usually in the wrong file, not in the wrong list.",
-        "default": "The file is too long, not too weakly worded."
+        "0": "Repeating a rule feels like emphasis. It is a symptom: the file is carrying material that belongs in a skill, and once that leaves, the rule does not need saying twice.",
+        "1": "A rule worth having does not stop being worth having because the file around it grew. Move the procedures and the reference out first, then look at what is left.",
+        "default": "A long instruction file dilutes the rules inside it. Move the procedures and the reference out."
       }
     },
     {
       "id": "who-fires",
       "tag": "who may start it",
       "kind": "multi",
-      "prompt": "Which of these should be skills the model may not start on its own, so only a person can invoke them?",
+      "prompt": "Which of these should be a skill the agent may not start on its own?",
       "options": [
         "Publish your exercise to a public web page",
         "Wipe the local database and reseed it",
         "Explain what a React hook is",
+        "A four step release run: research, plan, implement, review",
         "Turn a topic into a practice exercise",
         "Rotate the API keys"
       ],
       "answer": [
         0,
         1,
-        4
+        3,
+        5
       ],
-      "feedback": "Reserve it for the step that is hard to undo, or that has to be your decision: publishing, wiping a database, rotating keys. Everything else is better left reachable by the model, because a skill that only fires when you name it is a skill that never helps while you are thinking about something else.",
+      "feedback": "Two things earn it. One is a step that is hard to undo, or that has to be your call: publishing, wiping a database, rotating keys. The other is a run you start on purpose, like a four step release, where the value is that you decide when it happens. Both take the same key, and both save context: a skill with disable-model-invocation: true is not in the agent's list at all, so it costs nothing while you work on something else. Everything else is better left reachable, because a skill you have to name before it fires cannot help you while you are thinking about something else.",
       "misconception": {
-        "2": "Explaining a concept is safe and reversible. Locking it behind your own memory buys nothing and costs you the moment you would have been helped.",
-        "3": "Building an exercise is the ordinary work of the class, and it is meant to happen while you are working on a topic. Leave it reachable.",
-        "default": "Locking too much is the tempting mistake. A skill the model cannot reach does nothing until you remember it exists."
+        "2": "This is one to leave reachable. The moment you want it is the moment your question is unclear, which is exactly when the agent should reach for it on its own.",
+        "4": "The opposite of this one: the words you would type to start it are also the words that should let it fire, so it does its job best when the agent can reach for it.",
+        "default": "Hard to undo, or yours to start: both take the key."
       }
     },
     {
@@ -162,7 +170,7 @@
         "A rule that must hold on every task, and it is sometimes missed",
         "A 200 line procedure the agent needs twice a week",
         "A skill that exists but never fires",
-        "A step that publishes or deletes, and must run only when you ask"
+        "A run of four steps you want to start yourself, like a release"
       ],
       "rights": [
         "Make it a skill, so the cost waits until it fires",
@@ -176,7 +184,7 @@
         3,
         1
       ],
-      "feedback": "A rule that must always hold cannot depend on the model noticing it, so it belongs in AGENTS.md. A long procedure that only matters now and then is a skill, where its cost waits. A skill that never fires has a description problem: the description is the only part the model reads when it decides. Anything hard to undo, or that is your call, gets disable-model-invocation: true.",
+      "feedback": "A rule that must always hold cannot depend on the agent noticing it, so it goes in AGENTS.md. A long procedure that matters twice a week is a skill, where its cost waits until it fires. A skill that never fires has a description problem: the description is the only part the agent reads when it decides. A run you start on purpose, or a step that is hard to undo, gets disable-model-invocation: true, which also keeps it out of the agent's list until you call for it.",
       "misconception": "A rule you must never miss feels like it needs a procedure behind it, so making it a skill is tempting. But a skill fires only when the model reads your request and decides it is relevant, and a rule that has to hold every time cannot wait for that."
     },
     {
@@ -196,7 +204,7 @@
         0,
         2
       ],
-      "feedback": "Ask first whether the line has to be true on every turn, because that decides it. If it does, no skill can promise it, since a skill fires only when the model decides it is relevant. If it does not have to hold every turn, ask whether it is short. Short and occasional still fits in AGENTS.md. Anything longer becomes a skill, and the last question is whether the model should be able to reach for it on its own.",
+      "feedback": "Ask first whether the line has to be true on every turn, because that decides it. If it does, no skill can promise it, since a skill fires only when the agent decides it is relevant. If it does not have to hold every turn, ask whether it is short. Short and occasional still fits in AGENTS.md. Anything longer becomes a skill, and the last question is whether the agent should be able to reach for it on its own. If it should not, that is the same switch you set for a run you want to start yourself.",
       "misconception": "It is tempting to start with whether the model should find it on its own, because that is the interesting question. But it is the last one. A line that must hold on every turn never reaches it, because no skill can promise that."
     },
     {

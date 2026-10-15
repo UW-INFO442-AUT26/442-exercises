@@ -29,7 +29,8 @@ network, so it works from any path and keeps working offline once it is open.
 2. Put the folder at `exercises/<slug>/`, where `<slug>` is `meta.slug` from the
    spec. The slug is the URL, so make it read well.
 3. Add an entry to `exercises.json`: `slug`, `title`, `goal`, `minutes`, `steps`,
-   `graded`, `tags`, `date`.
+   `questions`, `activities`, `tags`, `date`. `questions` counts the steps
+   that are scored, `activities` the ones that are not.
 4. Rebuild the home page and check it:
 
    ```bash

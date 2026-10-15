@@ -10,8 +10,8 @@
       "title": "AGENTS.md or a skill?",
       "goal": "After this you can decide whether a piece of guidance belongs in AGENTS.md or in a skill, and say why in one sentence.",
       "minutes": 8,
-      "steps": 8,
-      "graded": 7,
+      "questions": 7,
+      "activities": 1,
       "tags": [
         "what is loaded",
         "which one it belongs in",
@@ -25,8 +25,8 @@
       "title": "Write your own agent skill",
       "goal": "After this you can write a SKILL.md your agent finds on its own, and link two skills into one workflow.",
       "minutes": 10,
-      "steps": 10,
-      "graded": 7,
+      "questions": 7,
+      "activities": 3,
       "tags": [
         "how a skill fires",
         "the trigger",
