@@ -2,10 +2,12 @@
   "site": {
     "title": "Practice exercises",
     "kicker": "INFO 442 · Autumn 2026",
-    "lede": "Short practice for the ideas we cover in lab. Each one takes about ten minutes and fits on a phone. Pick one, finish it, then come back to the ones you missed tomorrow."
+    "lede": "Short practice for the ideas we cover in lab. A quiz is one page you finish on your phone in about ten minutes. An interactive problem is a small project you clone and fix on a laptop. Pick one, finish it, then come back to the ones you missed tomorrow."
   },
   "exercises": [
     {
+      "number": 1,
+      "kind": "quiz",
       "slug": "agents-md-or-skill",
       "title": "AGENTS.md or a skill?",
       "goal": "After this you can decide whether a piece of guidance belongs in AGENTS.md or in a skill, and say why in one sentence.",
@@ -21,6 +23,8 @@
       "date": "2026-10-15"
     },
     {
+      "number": 2,
+      "kind": "quiz",
       "slug": "442-write-your-own-skill",
       "title": "Write your own agent skill",
       "goal": "After this you can write a SKILL.md your agent finds on its own, and link two skills into one workflow.",
@@ -39,6 +43,23 @@
         "linking skills"
       ],
       "date": "2026-10-15"
+    },
+    {
+      "number": 3,
+      "kind": "interactive",
+      "slug": "boolean-and-rendering",
+      "title": "Boolean && rendering",
+      "goal": "After this you can show and hide part of a page with &&, and explain why a number is the wrong condition.",
+      "minutes": 15,
+      "questions": 0,
+      "activities": 3,
+      "practice": "practice/boolean-and-rendering",
+      "tags": [
+        "boolean state",
+        "conditional rendering",
+        "the zero trap"
+      ],
+      "date": "2026-10-22"
     }
   ]
 }

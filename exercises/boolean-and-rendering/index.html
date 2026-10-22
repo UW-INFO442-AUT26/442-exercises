@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<meta name="description" content="INFO 442 practice problem 3. Clone the project, then fix three comments about boolean state and conditional rendering." />
+<title>Problem 3: Boolean &amp;&amp; rendering · INFO 442</title>
+<style>
+/* Design tokens vendored from skills/442-brand/tokens.css. This page is one
+   file, so the tokens live inline. Change a value in 442-brand first. */
+:root {
+  --uw-purple:      #4B2E83;
+  --uw-purple-deep: #351F63;
+  --uw-gold:        #B7A57A;
+  --uw-gold-deep:   #85754D;
+
+  --bg:       #F7F7FB;
+  --surface:  #FFFFFF;
+  --surface-2:#EDEDF4;
+  --ink:      #16151D;
+  --ink-2:    #3C3B4A;
+  --muted:    #6B6A7B;
+  --border:   #DADAE4;
+
+  --accent:      #6C4AB6;
+  --accent-ink:  #FFFFFF;
+  --accent-soft: #EDE7FB;
+
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+
+  --leading: 1.55;
+  --leading-tight: 1.2;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-pill: 999px;
+  --shadow-1: 0 1px 2px rgba(22, 21, 29, 0.06), 0 1px 3px rgba(22, 21, 29, 0.08);
+  --tap: 44px;
+  --motion: 160ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0F0E15;
+    --surface: #1A1822;
+    --surface-2: #242230;
+    --ink: #F2F1F7;
+    --ink-2: #C9C7D6;
+    --muted: #9A98AC;
+    --border: #302E3C;
+    --accent: #9B7BE0;
+    --accent-ink: #14121B;
+    --accent-soft: #2A2340;
+    --uw-purple: #8A6FC7;
+    --uw-gold-deep: #D2C49B;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading);
+  -webkit-text-size-adjust: 100%;
+}
+.wrap { max-width: 40rem; margin: 0 auto; padding: var(--space-6) var(--space-4) var(--space-8); }
+.kicker {
+  margin: 0;
+  color: var(--uw-gold-deep);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+h1 { margin: var(--space-1) 0 0; font-size: var(--text-2xl); line-height: var(--leading-tight); }
+.rule { width: 3.5rem; height: 4px; margin: var(--space-3) 0 var(--space-4); background: var(--accent); border-radius: var(--radius-pill); }
+.lede { margin: 0 0 var(--space-4); color: var(--ink-2); font-size: var(--text-lg); }
+.meta { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0 0 var(--space-6); padding: 0; list-style: none; }
+.meta li {
+  padding: 0.15rem 0.5rem;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+.meta li:first-child { background: var(--uw-purple); color: var(--accent-ink); font-weight: 600; }
+h2 { margin: var(--space-6) 0 var(--space-2); font-size: var(--text-xl); line-height: var(--leading-tight); }
+p { margin: 0 0 var(--space-3); }
+pre {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  box-shadow: var(--shadow-1);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  overflow-x: auto;
+}
+code { font-family: var(--font-mono); font-size: 0.95em; }
+p code, li code { background: var(--surface-2); padding: 0.1rem 0.3rem; border-radius: var(--radius-sm); }
+ol, ul { margin: 0 0 var(--space-4); padding-left: var(--space-6); }
+li { margin-bottom: var(--space-2); }
+li:last-child { margin-bottom: 0; }
+.foot { margin-top: var(--space-8); color: var(--muted); font-size: var(--text-sm); }
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) {
+  a { transition: color var(--motion) var(--ease); }
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <p class="kicker">INFO 442 · Autumn 2026</p>
+  <h1>Boolean &amp;&amp; rendering</h1>
+  <div class="rule" aria-hidden="true"></div>
+  <p class="lede">After this you can show and hide part of a page with <code>&amp;&amp;</code>, and explain why a number is the wrong condition.</p>
+
+  <ul class="meta">
+    <li>Problem 3</li>
+    <li>Interactive</li>
+    <li>15 min</li>
+    <li>On a laptop</li>
+  </ul>
+
+  <p>This one is a small React project, not a quiz. The page already runs. Three comments in <code>src/App.jsx</code> say what is wrong, and you fix them.</p>
+
+  <h2>Get the code</h2>
+  <pre><code>git clone https://github.com/UW-INFO442-AUT26/442-exercises
+cd 442-exercises/practice/boolean-and-rendering
+npm i
+npm run dev</code></pre>
+  <p>Open the address it prints, usually <code>http://localhost:5173</code>.</p>
+
+  <h2>What to fix</h2>
+  <ol>
+    <li>A counter where a boolean belongs. The button counts up and never comes back down.</li>
+    <li>A card that renders every time, because nothing is guarding it. Put the condition in front of the element with <code>&amp;&amp;</code>.</li>
+    <li>A <code>0</code> that can show up on the page when the condition is a number. Read the page, not just the code.</li>
+  </ol>
+
+  <h2>Done when</h2>
+  <ul>
+    <li>Clicking the button shows the card, and clicking again hides it.</li>
+    <li>Nothing is left behind when the card is hidden.</li>
+    <li><code>npm run lint</code> is clean.</li>
+  </ul>
+
+  <p class="foot">The project, with its own README: <a href="https://github.com/UW-INFO442-AUT26/442-exercises/tree/main/practice/boolean-and-rendering">practice/boolean-and-rendering</a>. Looking for the quiz exercises instead? <a href="../../">Back to the list</a>.</p>
+</main>
+</body>
+</html>
