@@ -81,26 +81,10 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 .wrap { max-width: 40rem; margin: 0 auto; padding: var(--space-6) var(--space-4) var(--space-8); }
-.kicker {
-  margin: 0;
-  color: var(--uw-gold-deep);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-h1 { margin: var(--space-1) 0 0; font-size: var(--text-2xl); line-height: var(--leading-tight); }
+h1 { margin: 0 0 0; font-size: var(--text-2xl); line-height: var(--leading-tight); }
 .rule { width: 3.5rem; height: 4px; margin: var(--space-3) 0 var(--space-4); background: var(--accent); border-radius: var(--radius-pill); }
 .lede { margin: 0 0 var(--space-4); color: var(--ink-2); font-size: var(--text-lg); }
-.meta { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0 0 var(--space-6); padding: 0; list-style: none; }
-.meta li {
-  padding: 0.15rem 0.5rem;
-  background: var(--surface-2);
-  border-radius: var(--radius-sm);
-  color: var(--muted);
-  font-size: var(--text-sm);
-}
-.meta li:first-child { background: var(--uw-purple); color: var(--accent-ink); font-weight: 600; }
+.meta { margin: 0 0 var(--space-6); color: var(--muted); font-size: var(--text-sm); }
 h2 { margin: var(--space-6) 0 var(--space-2); font-size: var(--text-xl); line-height: var(--leading-tight); }
 p { margin: 0 0 var(--space-3); }
 pre {
@@ -113,7 +97,8 @@ pre {
   box-shadow: var(--shadow-1);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
-  overflow-x: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 code { font-family: var(--font-mono); font-size: 0.95em; }
 p code, li code { background: var(--surface-2); padding: 0.1rem 0.3rem; border-radius: var(--radius-sm); }
@@ -130,42 +115,36 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 </head>
 <body>
 <main class="wrap">
-  <p class="kicker">INFO 442 · Autumn 2026</p>
   <h1>Boolean &amp;&amp; rendering</h1>
   <div class="rule" aria-hidden="true"></div>
-  <p class="lede">After this you can show and hide part of a page with <code>&amp;&amp;</code>, and explain why a number is the wrong condition.</p>
+  <p class="lede">After this you can show and hide part of a page with <code>&amp;&amp;</code>, and say why a number is the wrong condition.</p>
 
-  <ul class="meta">
-    <li>Problem 3</li>
-    <li>Interactive</li>
-    <li>15 min</li>
-    <li>On a laptop</li>
-  </ul>
+  <p class="meta">Problem 3 · Interactive · 15 min · On a laptop</p>
 
-  <p>This one is a small React project, not a quiz. The page already runs. Three comments in <code>src/App.jsx</code> say what is wrong, and you fix them.</p>
+  <p>This one is a small React project, not a quiz. The page already runs. Three comments in <code>src/App.jsx</code> say what is wrong. You fix them, one at a time.</p>
 
   <h2>Get the code</h2>
   <pre><code>git clone https://github.com/UW-INFO442-AUT26/442-exercises
 cd 442-exercises/practice/boolean-and-rendering
 npm i
 npm run dev</code></pre>
-  <p>Open the address it prints, usually <code>http://localhost:5173</code>.</p>
+  <p>Open the address it prints, usually <code>http://localhost:5173</code>. Change one thing, save the file, and look at the page. It updates by itself.</p>
 
   <h2>What to fix</h2>
   <ol>
-    <li>A counter where a boolean belongs. The button counts up and never comes back down.</li>
-    <li>A card that renders every time, because nothing is guarding it. Put the condition in front of the element with <code>&amp;&amp;</code>.</li>
-    <li>A <code>0</code> that can show up on the page when the condition is a number. Read the page, not just the code.</li>
+    <li>A counter that should be a boolean. A boolean is a value that is either true or false. The counter only goes up, so the button never comes back down.</li>
+    <li>A card that always shows. Nothing is guarding it yet. You will put a condition in front of it with <code>&amp;&amp;</code>.</li>
+    <li>A <code>0</code> that shows up when the condition is a number. Look at the page to spot it.</li>
   </ol>
 
   <h2>Done when</h2>
   <ul>
-    <li>Clicking the button shows the card, and clicking again hides it.</li>
+    <li>The button shows the card. The same button hides it again.</li>
     <li>Nothing is left behind when the card is hidden.</li>
-    <li><code>npm run lint</code> is clean.</li>
+    <li><code>npm run lint</code> has nothing to say.</li>
   </ul>
 
-  <p class="foot">The project, with its own README: <a href="https://github.com/UW-INFO442-AUT26/442-exercises/tree/main/practice/boolean-and-rendering">practice/boolean-and-rendering</a>. Looking for the quiz exercises instead? <a href="../../">Back to the list</a>.</p>
+  <p class="foot">The project, with its own README: <a href="https://github.com/UW-INFO442-AUT26/442-exercises/tree/main/practice/boolean-and-rendering">practice/boolean-and-rendering</a>. Want a quiz instead? <a href="../../">Back to the list</a>.</p>
 </main>
 </body>
 </html>

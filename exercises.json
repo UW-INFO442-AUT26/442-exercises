@@ -1,8 +1,7 @@
 {
   "site": {
-    "title": "Practice exercises",
-    "kicker": "INFO 442 · Autumn 2026",
-    "lede": "Short practice for the ideas we cover in lab. A quiz is one page you finish on your phone in about ten minutes. An interactive problem is a small project you clone and fix on a laptop. Pick one, finish it, then come back to the ones you missed tomorrow."
+    "title": "INFO 442 practice exercises",
+    "lede": "Practice for the ideas we cover in lab. A quiz is one page, done on your phone in about ten minutes. A practice problem is a small project you clone and fix on a laptop. Pick one, finish it, and come back tomorrow for the ones you missed."
   },
   "exercises": [
     {
@@ -49,7 +48,7 @@
       "kind": "interactive",
       "slug": "boolean-and-rendering",
       "title": "Boolean && rendering",
-      "goal": "After this you can show and hide part of a page with &&, and explain why a number is the wrong condition.",
+      "goal": "After this you can show and hide part of a page with &&, and say why a number is the wrong condition.",
       "minutes": 15,
       "questions": 0,
       "activities": 3,

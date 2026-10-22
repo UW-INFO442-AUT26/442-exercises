@@ -81,13 +81,14 @@ const shown = [...exercises].sort((a, b) => {
 const card = (ex) => {
   const tags = (ex.tags || []).map((t) => "<span>" + esc(t) + "</span>").join("");
   const meta = [
+    "Problem " + ex.number,
+    KINDS[ex.kind],
     ex.minutes + " min",
     ex.questions > 0 ? ex.questions + (ex.questions === 1 ? " question" : " questions") : "",
     ex.activities > 0 ? ex.activities + (ex.activities === 1 ? " activity" : " activities") : ""
-  ].filter((m) => m).map((m) => "<span>" + esc(m) + "</span>").join("");
+  ].filter((m) => m).join(" · ");
   return `      <li class="card">
         <a class="card-a" href="exercises/${esc(ex.slug)}/">
-          <p class="card-top"><span class="card-n">Problem ${esc(ex.number)}</span><span class="card-k card-k--${esc(ex.kind)}">${esc(KINDS[ex.kind])}</span></p>
           <h2 class="card-t">${esc(ex.title)}</h2>
           <p class="card-g">${esc(ex.goal)}</p>
           <p class="card-m">${meta}</p>
@@ -169,15 +170,7 @@ const html = `<!doctype html>
     -webkit-text-size-adjust: 100%;
   }
   .wrap { max-width: 44rem; margin: 0 auto; padding: var(--space-6) var(--space-4) var(--space-8); }
-  .kicker {
-    margin: 0;
-    color: var(--uw-gold-deep);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-  h1 { margin: var(--space-1, 0.25rem) 0 0; font-size: var(--text-2xl); line-height: var(--leading-tight); }
+  h1 { margin: 0; font-size: var(--text-2xl); line-height: var(--leading-tight); }
   .rule {
     width: 3.5rem;
     height: 4px;
@@ -203,27 +196,8 @@ const html = `<!doctype html>
   .card-a:hover, .card-a:focus-visible { background: var(--surface-2); }
   .card-a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .card-t { margin: 0; font-size: var(--text-lg); line-height: var(--leading-tight); }
-  .card-top { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0 0 var(--space-2); }
-  .card-n, .card-k {
-    padding: 0.1rem 0.5rem;
-    border-radius: var(--radius-pill);
-    font-size: var(--text-xs);
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-  .card-n { background: var(--uw-purple); color: var(--accent-ink); }
-  .card-k { background: var(--surface-2); color: var(--muted); }
-  .card-k--interactive { background: var(--accent-soft); color: var(--accent); }
   .card-g { margin: var(--space-2) 0 0; color: var(--ink-2); }
-  .card-m { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-3) 0 0; }
-  .card-m span {
-    padding: 0.15rem 0.5rem;
-    background: var(--surface-2);
-    border-radius: var(--radius-sm);
-    color: var(--muted);
-    font-size: var(--text-sm);
-  }
+  .card-m { margin: var(--space-3) 0 0; color: var(--muted); font-size: var(--text-sm); }
   .card-tags { margin: var(--space-2) 0 0; color: var(--muted); font-size: var(--text-sm); }
   .card-tags span + span::before { content: " · "; }
   .card-p { margin: var(--space-3) 0 0; color: var(--muted); font-family: var(--font-mono); font-size: var(--text-sm); }
@@ -235,7 +209,6 @@ const html = `<!doctype html>
 <body>
 <main class="wrap">
   <header>
-    <p class="kicker">${esc(site.kicker || "INFO 442")}</p>
     <h1>${esc(site.title || "Practice exercises")}</h1>
     <div class="rule" aria-hidden="true"></div>
     <p class="lede">${esc(site.lede || "Short practice for the ideas we cover in lab. Each one takes about ten minutes and fits on a phone.")}</p>
