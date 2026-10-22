@@ -37,26 +37,45 @@ const site = data.site || {};
 if (!Array.isArray(data.exercises)) die("exercises.json needs an exercises array");
 
 const problems = [];
+const KINDS = { quiz: "Quiz", interactive: "Interactive" };
+
 const exercises = data.exercises.map((ex, i) => {
   const where = "exercises[" + i + "]";
   for (const key of ["slug", "title", "goal"]) {
     if (typeof ex[key] !== "string" || !ex[key].trim()) problems.push(where + "." + key + " is required");
   }
-  for (const key of ["minutes", "questions", "activities"]) {
+  for (const key of ["minutes", "questions", "activities", "number"]) {
     if (!Number.isInteger(ex[key]) || ex[key] < 0) problems.push(where + "." + key + " must be a whole number");
   }
+  if (!ex.number) problems.push(where + ".number must be 1 or more");
+  if (!KINDS[ex.kind]) problems.push(where + ".kind must be one of " + Object.keys(KINDS).join(", "));
   if (ex.tags !== undefined && !Array.isArray(ex.tags)) problems.push(where + ".tags must be an array");
   if (typeof ex.slug === "string" && !existsSync(join(root, "exercises", ex.slug, "index.html"))) {
     problems.push(where + ": exercises/" + ex.slug + "/index.html does not exist");
+  }
+  // An interactive problem is a project the student clones, so the manifest
+  // has to point at one that is really there.
+  if (ex.kind === "interactive") {
+    if (typeof ex.practice !== "string" || !ex.practice.trim()) {
+      problems.push(where + ".practice is required for an interactive problem");
+    } else if (!existsSync(join(root, ex.practice, "package.json"))) {
+      problems.push(where + ": " + ex.practice + "/package.json does not exist");
+    }
   }
   return ex;
 });
 if (problems.length) die(problems.join("\n  "));
 
-// Newest first, then by title, so the page reads as a history.
+const seen = new Map();
+for (const ex of exercises) {
+  if (seen.has(ex.number)) die("two exercises share number " + ex.number + ": " + seen.get(ex.number) + " and " + ex.slug);
+  seen.set(ex.number, ex.slug);
+}
+
+// Highest number first, so the newest problem sits at the top and the page
+// reads as a history.
 const shown = [...exercises].sort((a, b) => {
-  const byDate = String(b.date || "").localeCompare(String(a.date || ""));
-  return byDate !== 0 ? byDate : String(a.title).localeCompare(String(b.title));
+  return b.number - a.number || String(a.title).localeCompare(String(b.title));
 });
 
 const card = (ex) => {
@@ -68,6 +87,7 @@ const card = (ex) => {
   ].filter((m) => m).map((m) => "<span>" + esc(m) + "</span>").join("");
   return `      <li class="card">
         <a class="card-a" href="exercises/${esc(ex.slug)}/">
+          <p class="card-top"><span class="card-n">Problem ${esc(ex.number)}</span><span class="card-k card-k--${esc(ex.kind)}">${esc(KINDS[ex.kind])}</span></p>
           <h2 class="card-t">${esc(ex.title)}</h2>
           <p class="card-g">${esc(ex.goal)}</p>
           <p class="card-m">${meta}</p>
@@ -183,6 +203,18 @@ const html = `<!doctype html>
   .card-a:hover, .card-a:focus-visible { background: var(--surface-2); }
   .card-a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .card-t { margin: 0; font-size: var(--text-lg); line-height: var(--leading-tight); }
+  .card-top { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0 0 var(--space-2); }
+  .card-n, .card-k {
+    padding: 0.1rem 0.5rem;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .card-n { background: var(--uw-purple); color: var(--accent-ink); }
+  .card-k { background: var(--surface-2); color: var(--muted); }
+  .card-k--interactive { background: var(--accent-soft); color: var(--accent); }
   .card-g { margin: var(--space-2) 0 0; color: var(--ink-2); }
   .card-m { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-3) 0 0; }
   .card-m span {
